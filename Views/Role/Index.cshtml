@@ -1,0 +1,57 @@
+﻿@using Microsoft.AspNetCore.Identity;
+@model IEnumerable<IdentityRole>
+
+@{
+	ViewData["Title"] = "System Users";
+}
+
+<p>
+	<a asp-action="Create" class="btn btn-primary mt-3"><i class="fa fa-plus"></i> Add New Role</a>
+</p>
+<div class="card">
+	<div class="card-header">
+		<h3 class="card-title">Role List</h3>
+	</div>
+	<!-- /.card-header -->
+	<div class="card-body">
+		@if (Model.Any())
+		{
+			<table id="example" class="table table-bordered table-striped">
+				<thead>
+					<tr>
+						<th>Id</th>
+						<th>Name</th>
+						<th>Role Name</th>
+
+					</tr>
+				</thead>
+				<tbody>
+
+					@foreach (var role in Model)
+					{
+
+						<tr>
+							<td>@role.Id</td>
+							<td>@role.Name</td>
+							<td>@role.NormalizedName</td>
+
+
+							
+						</tr>
+
+
+					}
+
+				</tbody>
+			</table>
+		}
+		else
+		{
+			<p>No data available in List</p>
+		}
+	</div>
+</div>
+
+
+
+

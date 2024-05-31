@@ -1,0 +1,62 @@
+﻿@model IEnumerable<ECommerceProject.Models.SubCategory>
+
+@{
+	ViewData["Title"] = "Index";
+}
+
+<p>
+	<a asp-action="Create" class="btn btn-primary mt-3"><i class="fa fa-plus"></i> Add New SubCategory</a>
+</p>
+<div class="card">
+	<div class="card-header">
+		<h3 class="card-title">System Profile List</h3>
+	</div>
+	<!-- /.card-header -->
+	<div class="card-body">
+		<table id="example1" class="table table-bordered table-striped">
+			<thead>
+				<tr>
+					<th>
+						@Html.DisplayNameFor(model => model.Name)
+					</th>
+					<th>
+						@Html.DisplayNameFor(model => model.Subtitle)
+					</th>
+					<th>
+						@Html.DisplayNameFor(model => model.Image)
+					</th>
+					<th>
+						@Html.DisplayNameFor(model => model.MainCategory)
+					</th>
+					<th>
+						Action
+					</th>
+				</tr>
+			</thead>
+			<tbody>
+				@foreach (var item in Model)
+				{
+					<tr>
+						<td>
+							@Html.DisplayFor(modelItem => item.Name)
+						</td>
+						<td>
+							@Html.DisplayFor(modelItem => item.Subtitle)
+						</td>
+						<td>
+							<img src=" ../uploads/@Html.DisplayFor(modelItem => item.Image)" alt="Alternate Text" style="width:50px; height:50px;" />
+						</td>
+						<td>
+							@Html.DisplayFor(modelItem => item.MainCategory.Name)
+						</td>
+						<td>
+							<a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
+							<a asp-action="Details" asp-route-id="@item.Id">Details</a> |
+							<a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
+						</td>
+					</tr>
+				}
+			</tbody>
+		</table>
+	</div>
+</div>

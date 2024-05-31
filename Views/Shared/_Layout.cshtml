@@ -1,0 +1,340 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="utf-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+	<title>@ViewData["Title"] - ECommerceProject</title>
+	<link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+	<link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+	<link rel="stylesheet" href="~/ECommerceProject.styles.css" asp-append-version="true" />
+
+
+
+	<!-- Google Font: Source Sans Pro -->
+	<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback">
+	<!-- Font Awesome -->
+	<link rel="stylesheet" href="~/AdminLTE/plugins/fontawesome-free/css/all.min.css">
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css">
+	<!-- Ionicons -->
+	<link rel="stylesheet" href="https://code.ionicframework.com/ionicons/2.0.1/css/ionicons.min.css">
+	<!-- Tempusdominus Bootstrap 4 -->
+	<link rel="stylesheet" href="~/AdminLTE/plugins/tempusdominus-bootstrap-4/css/tempusdominus-bootstrap-4.min.css">
+	<!-- iCheck -->
+	<link rel="stylesheet" href="~/AdminLTE/plugins/icheck-bootstrap/icheck-bootstrap.min.css">
+	<!-- JQVMap -->
+	<link rel="stylesheet" href="~/AdminLTE/plugins/jqvmap/jqvmap.min.css">
+	<!-- Theme style -->
+	<link rel="stylesheet" href="~/AdminLTE/dist/css/adminlte.min.css">
+	<!-- overlayScrollbars -->
+	<link rel="stylesheet" href="~/AdminLTE/plugins/overlayScrollbars/css/OverlayScrollbars.min.css">
+	<!-- Daterange picker -->
+	<link rel="stylesheet" href="~/AdminLTE/plugins/daterangepicker/daterangepicker.css">
+	<!-- summernote -->
+	<link rel="stylesheet" href="~/AdminLTE/plugins/summernote/summernote-bs4.min.css">
+
+	<!-- DataTables -->
+	<link rel="stylesheet" href="~/AdminLTE/plugins/datatables-bs4/css/dataTables.bootstrap4.min.css">
+	<link rel="stylesheet" href="~/AdminLTE/plugins/datatables-responsive/css/responsive.bootstrap4.min.css">
+	<link rel="stylesheet" href="~/AdminLTE/plugins/datatables-buttons/css/buttons.bootstrap4.min.css">
+	
+</head>
+<body>
+	<div class="container-fluid">
+		<div class="row">
+			<div class="col">
+				<header>
+					<nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow">
+						<div class="container-fluid">
+							<a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">
+								<img src="~/images/icons/logo-01.png" alt="IMG-LOGO">
+							</a>
+
+							<button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
+									aria-expanded="false" aria-label="Toggle navigation">
+								<span class="navbar-toggler-icon"></span>
+							</button>
+							<div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
+								<ul class="navbar-nav flex-grow-1">
+									@if (User.IsInRole("Admin"))
+									{
+										<li class="nav-item">
+											<a class="nav-link" data-widget="pushmenu" href="#" role="button"><i class="fas fa-bars"></i></a>
+										</li>
+									}
+									<li class="nav-item">
+										<a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
+									</li>
+									<li class="nav-item">
+										<a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+									</li>
+
+
+
+								</ul>
+								<partial name="_LoginPartial" />
+							</div>
+						</div>
+					</nav>
+				</header>
+			</div>
+		</div>
+
+
+		<div class="content-container d-flex flex-column">
+
+			@if (User.IsInRole("Admin"))
+			{
+				<div class="row">
+					<div class="wrapper" >
+						<!-- /.navbar -->
+						<!-- Main Sidebar Container -->
+						<aside class="main-sidebar sidebar-dark-primary elevation-4">
+							<!-- Brand Logo -->
+							<a href="index3.html" class="brand-link">
+								<img src="~/AdminLTE/dist/img/AdminLTELogo.png" alt="AdminLTE Logo" class="brand-image img-circle elevation-3" style="opacity: .8">
+								<span class="brand-text font-weight-light">Admin</span>
+							</a>
+
+							<!-- Sidebar -->
+							<div class="sidebar">
+
+
+								<!-- SidebarSearch Form -->
+								<div class="form-inline mt-2">
+									<div class="input-group" data-widget="sidebar-search">
+										<input class="form-control form-control-sidebar" type="search" placeholder="Search" aria-label="Search">
+										<div class="input-group-append">
+											<button class="btn btn-sidebar">
+												<i class="fas fa-search fa-fw"></i>
+											</button>
+										</div>
+									</div>
+								</div>
+
+								<!-- Sidebar Menu -->
+								<nav class="mt-2">
+									<div class="sidebar-scroll">
+										<ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
+											<!-- Add icons to the links using the .nav-icon class
+												 with font-awesome or any other icon font library -->
+											<li class="nav-item menu-open">
+												<a asp-controller="Home" asp-action="Dashboard" class="nav-link active">
+													<i class="nav-icon fas fa-tachometer-alt"></i>
+													<p>
+														Dashboard
+													</p>
+												</a>
+
+											</li>
+											<li class="nav-item">
+												<a asp-controller="Employees" asp-action="Index" class="nav-link">
+													<i class="nav-icon fas fa fa-shopping-cart"></i>
+													<p>
+														Orders
+													</p>
+												</a>
+											</li>
+											<li class="nav-item">
+												<a href="#" class="nav-link">
+													<i class="nav-icon fas fa fa-bullseye"></i>
+													<p>
+														Categories
+														<i class="fas fa-angle-left right"></i>
+													</p>
+												</a>
+												<ul class="nav nav-treeview">
+													<li class="nav-item">
+														<a asp-controller="MainCategories" asp-action="Index" class="nav-link">
+															<i class="far fa fa-plus nav-icon"></i>
+															<p>Main Categories</p>
+														</a>
+													</li>
+													<li class="nav-item">
+														<a asp-controller="SubCategories" asp-action="Index" class="nav-link">
+															<i class="far fa fa-plus nav-icon"></i>
+															<p>Sub Categories</p>
+														</a>
+													</li>
+
+												</ul>
+											</li>
+											<li class="nav-item">
+												<a href="#" class="nav-link">
+													<i class="nav-icon fas fa fa-cubes"></i>
+													<p>
+														Products
+														<i class="fas fa-angle-left right"></i>
+													</p>
+												</a>
+												<ul class="nav nav-treeview">
+													<li class="nav-item">
+														<a asp-controller="LeaveTypes" asp-action="Index" class="nav-link">
+															<i class="far fa fa-plus nav-icon"></i>
+															<p>Add Product</p>
+														</a>
+													</li>
+													<li class="nav-item">
+														<a asp-controller="LeaveApplications" asp-action="Index" class="nav-link">
+															<i class="far fa fa-circle-o nav-icon"></i>
+															<p>Manage Products</p>
+														</a>
+													</li>
+													<li class="nav-item">
+														<a asp-controller="Brands" asp-action="Index" class="nav-link">
+															<i class="far nav-icon fa fa-dot-circle-o" aria-hidden="true"></i>
+															<p>Brand</p>
+														</a>
+													</li>
+
+												</ul>
+											</li>
+											<li class="nav-item">
+												<a href="#" class="nav-link">
+													<i class="nav-icon fas fa-table"></i>
+													<p>
+														System Security
+														<i class="fas fa-angle-left right"></i>
+													</p>
+												</a>
+												<ul class="nav nav-treeview">
+													<li class="nav-item">
+														<a asp-controller="Users" asp-action="Index" class="nav-link">
+															<i class="far fa-circle nav-icon"></i>
+															<p>Users</p>
+														</a>
+													</li>
+													<li class="nav-item">
+														<a asp-controller="Role" asp-action="Index" class="nav-link">
+															<i class="far fa-circle nav-icon"></i>
+															<p>Roles</p>
+														</a>
+													</li>
+
+												</ul>
+											</li>
+
+										</ul>
+									</div>
+								</nav>
+								<!-- /.sidebar-menu -->
+							</div>
+							<!-- /.sidebar -->
+						</aside>
+
+						<!-- Content Wrapper. Contains page content -->
+
+						<div class="content-wrapper">
+							<div class="sidebar-scroll">
+							<!-- Main content -->
+							<section class="content">
+								
+									<div class="container-fluid">
+										@RenderBody()
+									</div><!-- /.container-fluid -->
+								
+							</section>
+							<!-- /.content -->
+							</div>
+						</div>
+					</div>
+				</div>
+			}
+			else
+			{
+				<div class="col-12">
+					<!-- Main content area for non-admin users -->
+					<main role="main" class="pb-3">
+						@RenderBody()
+					</main>
+				</div>
+			}
+
+			@if (User.IsInRole("Admin"))
+			{
+				<footer class="main-footer mt-auto">
+					<strong>Copyright &copy; @DateTime.Now.Year <a href="">EMSystem</a>.</strong>
+					All rights reserved.
+					<div class="float-right d-none d-sm-inline-block mr-6">
+						<b>Version</b> 3.2.0
+					</div>
+				</footer>
+			}
+			else
+			{
+				<footer class="border-top footer text-muted">
+					<strong>Copyright &copy; @DateTime.Now.Year <a href="">EMSystem</a>.</strong>
+					All rights reserved.
+
+				</footer>
+			}
+
+		</div>
+		<!-- Control Sidebar -->
+		<aside class="control-sidebar control-sidebar-dark">
+			<!-- Control sidebar content goes here -->
+		</aside>
+	</div>
+
+	<script src="~/lib/jquery/dist/jquery.min.js"></script>
+	<script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+	<script src="~/js/site.js" asp-append-version="true"></script>
+
+
+	<!-- ./wrapper -->
+	<!-- jQuery -->
+	<script src="~/AdminLTE/plugins/jquery/jquery.min.js"></script>
+	<!-- jQuery UI 1.11.4 -->
+	<script src="~/AdminLTE/plugins/jquery-ui/jquery-ui.min.js"></script>
+	<!-- Resolve conflict in jQuery UI tooltip with Bootstrap tooltip -->
+	<script>
+		$.widget.bridge('uibutton', $.ui.button)
+	</script>
+	<!-- Bootstrap 4 -->
+	<script src="~/AdminLTE/plugins/bootstrap/js/bootstrap.bundle.min.js"></script>
+	<!-- ChartJS -->
+	<script src="~/AdminLTE/plugins/chart.js/Chart.min.js"></script>
+	<!-- Sparkline -->
+	<script src="~/AdminLTE/plugins/sparklines/sparkline.js"></script>
+	<!-- JQVMap -->
+	<script src="~/AdminLTE/plugins/jqvmap/jquery.vmap.min.js"></script>
+	<script src="~/AdminLTE/plugins/jqvmap/maps/jquery.vmap.usa.js"></script>
+	<!-- jQuery Knob Chart -->
+	<script src="plugins/jquery-knob/jquery.knob.min.js"></script>
+	<!-- daterangepicker -->
+	<script src="~/AdminLTE/plugins/moment/moment.min.js"></script>
+	<script src="~/AdminLTE/plugins/daterangepicker/daterangepicker.js"></script>
+	<!-- Tempusdominus Bootstrap 4 -->
+	<script src="~/AdminLTE/plugins/tempusdominus-bootstrap-4/js/tempusdominus-bootstrap-4.min.js"></script>
+	<!-- Summernote -->
+	<script src="~/AdminLTE/plugins/summernote/summernote-bs4.min.js"></script>
+	<!-- overlayScrollbars -->
+	<script src="~/AdminLTE/plugins/overlayScrollbars/js/jquery.overlayScrollbars.min.js"></script>
+	<!-- AdminLTE App -->
+	<script src="~/AdminLTE/dist/js/adminlte.js"></script>
+	<!-- AdminLTE for demo purposes -->
+	<script src="~/AdminLTE/dist/js/demo.js"></script>
+	<!-- AdminLTE dashboard demo (This is only for demo purposes) -->
+	<script src="~/AdminLTE/dist/js/pages/dashboard.js"></script>
+
+
+	<!-- Page specific script -->
+	<script>
+		$(function () {
+			$("#example1").DataTable({
+				"responsive": true, "lengthChange": false, "autoWidth": false,
+				"buttons": ["copy", "csv", "excel", "pdf", "print", "colvis"]
+			}).buttons().container().appendTo('#example1_wrapper .col-md-6:eq(0)');
+			$('#example2').DataTable({
+				"paging": true,
+				"lengthChange": false,
+				"searching": false,
+				"ordering": true,
+				"info": true,
+				"autoWidth": false,
+				"responsive": true,
+			});
+		});
+	</script>
+	@await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

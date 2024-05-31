@@ -1,0 +1,33 @@
+html {
+  font-size: 14px;
+}
+
+@media (min-width: 768px) {
+  html {
+    font-size: 16px;
+  }
+}
+
+html {
+  position: relative;
+  min-height: 100%;
+}
+
+body {
+  margin-bottom: 60px;
+}
+
+.sidebar-scroll {
+    height: calc(70vh); /* Adjust the height as needed */
+    overflow-y: auto;
+}
+
+.content-container {
+    min-height: 100vh;
+}
+
+.main-footer {
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+}
