@@ -23,7 +23,7 @@
 
   <ItemGroup>
     <Folder Include="Pages\" />
-    <Folder Include="wwwroot\uploads\" />
+    <Folder Include="wwwroot\uploads\brand\" />
   </ItemGroup>
 
 </Project>

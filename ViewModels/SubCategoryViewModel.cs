@@ -11,11 +11,11 @@ namespace ECommerceProject.ViewModels
         public string Subtitle { get; set; }
 
         public IFormFile Image { get; set; }
-
+        public string ImagePath { get; set; }
         public int MainCategoryId { get; set; }
 
         public List<MainCategory> MainCategories { get; set; }
 
-        public string ImagePath { get; set; }
+      
     }
 }

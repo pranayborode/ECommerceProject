@@ -7,24 +7,31 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using ECommerceProject.Data;
 using ECommerceProject.Models;
+using ECommerceProject.ViewModels;
+using Microsoft.AspNetCore.Hosting;
 
 namespace ECommerceProject.Controllers
 {
     public class BrandsController : Controller
     {
         private readonly ApplicationDbContext _context;
+        private readonly IWebHostEnvironment _webHostEnvironment;
 
-        public BrandsController(ApplicationDbContext context)
+        public BrandsController(
+            ApplicationDbContext context,
+            IWebHostEnvironment webHostEnvironment)
         {
             _context = context;
+            _webHostEnvironment = webHostEnvironment;
+
         }
 
         // GET: Brands
         public async Task<IActionResult> Index()
         {
-              return _context.Brands != null ? 
-                          View(await _context.Brands.ToListAsync()) :
-                          Problem("Entity set 'ApplicationDbContext.Brands'  is null.");
+            return _context.Brands != null ?
+                        View(await _context.Brands.ToListAsync()) :
+                        Problem("Entity set 'ApplicationDbContext.Brands'  is null.");
         }
 
         // GET: Brands/Details/5
@@ -56,15 +63,40 @@ namespace ECommerceProject.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("BrandId,Name,Image")] Brand brand)
+        public async Task<IActionResult> Create([Bind("BrandId,Name,Image")] BrandViewModel brandViewModel)
         {
-            if (ModelState.IsValid)
+            try
             {
+
+                string fileName = "";
+                if (brandViewModel.Image != null)
+                {
+                    string uploadsFolder = Path.Combine(_webHostEnvironment.WebRootPath, "uploads/brand");
+                    fileName = Guid.NewGuid().ToString() + "_" + brandViewModel.Image.FileName;
+                    string filePath = Path.Combine(uploadsFolder, fileName);
+                    using (var fileStream = new FileStream(filePath, FileMode.Create))
+                    {
+                        await brandViewModel.Image.CopyToAsync(fileStream);
+                    }
+                }
+
+                Brand brand = new Brand
+                {
+                    Name = brandViewModel.Name,
+                    Image = fileName
+                };
+
                 _context.Add(brand);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            return View(brand);
+            catch (Exception ex)
+            {
+                ViewBag.ErrorMessage = ex.Message;
+                return View();
+            }
+
+
         }
 
         // GET: Brands/Edit/5
@@ -80,7 +112,13 @@ namespace ECommerceProject.Controllers
             {
                 return NotFound();
             }
-            return View(brand);
+            var viewModel = new BrandViewModel
+            {
+                BrandId = brand.BrandId,
+                Name = brand.Name,
+                ImagePath = brand.Image
+            };
+            return View(viewModel);
         }
 
         // POST: Brands/Edit/5
@@ -88,34 +126,65 @@ namespace ECommerceProject.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("BrandId,Name,Image")] Brand brand)
+        public async Task<IActionResult> Edit(BrandViewModel brandViewModel)
         {
-            if (id != brand.BrandId)
+            try
             {
-                return NotFound();
-            }
 
-            if (ModelState.IsValid)
-            {
-                try
+                string fileName = brandViewModel.Image != null ? Guid.NewGuid().ToString() + "_" + brandViewModel.Image.FileName : null;
+                if (brandViewModel.Image != null)
                 {
-                    _context.Update(brand);
-                    await _context.SaveChangesAsync();
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!BrandExists(brand.BrandId))
+                    string uploadsFolder = Path.Combine(_webHostEnvironment.WebRootPath, "uploads/brand");
+                    string filePath = Path.Combine(uploadsFolder, fileName);
+                    using (var fileStream = new FileStream(filePath, FileMode.Create))
                     {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
+                        await brandViewModel.Image.CopyToAsync(fileStream);
                     }
                 }
+
+                Brand brand = new Brand
+                {
+                    BrandId = brandViewModel.BrandId,
+                    Name = brandViewModel.Name,
+                    Image = fileName ?? _context.Brands.FindAsync(brandViewModel.BrandId).ToString()
+                };
+
+                _context.Update(brand);
+                await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            return View(brand);
+            catch (Exception ex)
+            {
+                ViewBag.ErrorMessage = ex.Message;
+                return View();
+            }
+
+            /* if (id != brand.BrandId)
+             {
+                 return NotFound();
+             }
+
+             if (ModelState.IsValid)
+             {
+                 try
+                 {
+                     _context.Update(brand);
+                     await _context.SaveChangesAsync();
+                 }
+                 catch (DbUpdateConcurrencyException)
+                 {
+                     if (!BrandExists(brand.BrandId))
+                     {
+                         return NotFound();
+                     }
+                     else
+                     {
+                         throw;
+                     }
+                 }
+                 return RedirectToAction(nameof(Index));
+             }
+             return View(brand);*/
         }
 
         // GET: Brands/Delete/5
@@ -150,14 +219,14 @@ namespace ECommerceProject.Controllers
             {
                 _context.Brands.Remove(brand);
             }
-            
+
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
         private bool BrandExists(int id)
         {
-          return (_context.Brands?.Any(e => e.BrandId == id)).GetValueOrDefault();
+            return (_context.Brands?.Any(e => e.BrandId == id)).GetValueOrDefault();
         }
     }
 }
