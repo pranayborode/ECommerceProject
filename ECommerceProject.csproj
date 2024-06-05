@@ -24,6 +24,7 @@
   <ItemGroup>
     <Folder Include="Pages\" />
     <Folder Include="wwwroot\uploads\brand\" />
+    <Folder Include="wwwroot\uploads\product\" />
   </ItemGroup>
 
 </Project>

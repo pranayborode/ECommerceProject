@@ -53,7 +53,7 @@ namespace ECommerceProject.Controllers
 				string fileName = "";
 				if (mCat.Image != null)
 				{
-					string uploadsFolder = Path.Combine(webHostEnvironment.WebRootPath, "uploads");
+					string uploadsFolder = Path.Combine(webHostEnvironment.WebRootPath, "uploads/category");
 					fileName = Guid.NewGuid().ToString() + "_" + mCat.Image.FileName;
 					string filePath = Path.Combine(uploadsFolder, fileName);
 					mCat.Image.CopyTo(new FileStream(filePath, FileMode.Create));
@@ -124,7 +124,7 @@ namespace ECommerceProject.Controllers
 
                 if (mCat.Image != null)
                 {
-                    string uploadsFolder = Path.Combine(webHostEnvironment.WebRootPath, "uploads");
+                    string uploadsFolder = Path.Combine(webHostEnvironment.WebRootPath, "uploads/category");
                     string filePath = Path.Combine(uploadsFolder, fileName);
                     using (var fileStream = new FileStream(filePath, FileMode.Create))
                     {

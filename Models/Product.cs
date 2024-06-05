@@ -35,8 +35,8 @@ namespace ECommerceProject.Models
         [Range(0, 100)]
         public int OfferPercentage { get; set; } 
 
-        [Required]
-        public string Gender { get; set; } 
+        /*[Required]
+        public string Gender { get; set; } */
          
         // Foreign key properties
         public int MainCategoryId { get; set; }
@@ -53,5 +53,7 @@ namespace ECommerceProject.Models
         [ForeignKey("BrandId")]
         public virtual Brand Brand { get; set; }
         public virtual ICollection<ProductImage> Images { get; set; }
+
+
     }
 }

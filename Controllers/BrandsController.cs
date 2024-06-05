@@ -9,10 +9,12 @@ using ECommerceProject.Data;
 using ECommerceProject.Models;
 using ECommerceProject.ViewModels;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Authorization;
 
 namespace ECommerceProject.Controllers
 {
-    public class BrandsController : Controller
+	[Authorize(Roles = "Admin")]
+	public class BrandsController : Controller
     {
         private readonly ApplicationDbContext _context;
         private readonly IWebHostEnvironment _webHostEnvironment;
