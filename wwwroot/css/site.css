@@ -18,7 +18,7 @@ body {
 }
 
 .sidebar-scroll {
-    height: calc(70vh); /* Adjust the height as needed */
+    height: calc(80vh); /* Adjust the height as needed */
     overflow-y: auto;
 }
 
@@ -34,4 +34,20 @@ body {
 
 .icon-text-color {
     color: #74C0FC;
+}
+
+/*Product- Index */
+.available {
+    color: green;
+}
+
+.soldout {
+    color: red;
+}
+
+
+/*Create Product Toggel button*/
+
+. custom-switch{
+    
 }

@@ -61,7 +61,7 @@ namespace ECommerceProject.Repositories
 			}
 			else
 			{
-				return 0;
+				return null;
 			}
 		}
 

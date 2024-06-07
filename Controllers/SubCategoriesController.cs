@@ -15,19 +15,19 @@ namespace ECommerceProject.Controllers
         private readonly ApplicationDbContext _context;
         private readonly ISubCategoryService subCategoryService;
         private readonly IMainCategoryService mainCategoryService;
-        private readonly IWebHostEnvironment webHostEnvironment;
+        private Microsoft.AspNetCore.Hosting.IHostingEnvironment _iHostEnv;
 
-		
-		public SubCategoriesController(
+
+        public SubCategoriesController(
             ApplicationDbContext context,
             ISubCategoryService subCategoryService,
             IMainCategoryService mainCategoryService,
-            IWebHostEnvironment webHostEnvironment)
+            Microsoft.AspNetCore.Hosting.IHostingEnvironment _iHostEnv)
         {
             this._context = context;
             this.subCategoryService = subCategoryService;
             this.mainCategoryService = mainCategoryService;
-            this.webHostEnvironment = webHostEnvironment;
+            this._iHostEnv = _iHostEnv;
         }
 
         // GET: SubCategoriesController
@@ -63,24 +63,24 @@ namespace ECommerceProject.Controllers
         // POST: SubCategoriesController/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Create(SubCategoryViewModel sCat)
+        public IActionResult Create(SubCategoryViewModel sCat, IFormFile file)
         {
             try
             {
-                string fileName = "";
-                if (sCat.Image != null)
+                using (var fs = new FileStream(_iHostEnv.WebRootPath + "\\uploads/category\\" + file.FileName, FileMode.Create, FileAccess.Write))
                 {
-                    string uploadsFolder = Path.Combine(webHostEnvironment.WebRootPath, "uploads/category");
-                    fileName = Guid.NewGuid().ToString() + "_" + sCat.Image.FileName;
-                    string filePath = Path.Combine(uploadsFolder, fileName);
-                    sCat.Image.CopyTo(new FileStream(filePath, FileMode.Create));
+                    file.CopyTo(fs);
+                }
+
+                sCat.ImagePath = "~/uploads/category/" + file.FileName;
+            
 
 
                     SubCategory subCategory = new SubCategory
                     {
                         Name = sCat.Name,
                         Subtitle = sCat.Subtitle,
-                        Image = fileName,
+                        Image =sCat.ImagePath,
                         MainCategoryId = sCat.MainCategoryId
                     };
 
@@ -98,8 +98,7 @@ namespace ECommerceProject.Controllers
                         return View(sCat);
                     }
 
-                }
-                return View();
+              
             }
             catch (Exception ex)
             {
@@ -112,7 +111,8 @@ namespace ECommerceProject.Controllers
         public ActionResult Edit(int id)
         {
             var subCategory = subCategoryService.GetSubCategoryById(id);
-            if (subCategory == null)
+			HttpContext.Session.SetString("oldImageUrl", subCategory.Image);
+			if (subCategory == null)
             {
                 return NotFound();
             }
@@ -133,28 +133,29 @@ namespace ECommerceProject.Controllers
         // POST: SubCategoriesController/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> Edit(SubCategoryViewModel sCat)
+        public async Task<ActionResult> Edit(SubCategoryViewModel sCat, IFormFile file)
         {
             try
             {
 
-              /*  if (!ModelState.IsValid)
-                {
-                    sCat.MainCategories = mainCategoryService.GetMainCategories().ToList();
-                    ViewData["MainCategoryId"] = new SelectList(_context.MainCategories, "Id", "Name", sCat.MainCategoryId);
-                    return View(sCat);
-                }*/
+				string oldimageurl = HttpContext.Session.GetString("oldImageUrl");
 
-                string fileName = sCat.Image != null ? Guid.NewGuid().ToString() + "_" + sCat.Image.FileName : null;
-
-                if (sCat.Image != null)
+				if (file != null)
                 {
-                    string uploadsFolder = Path.Combine(webHostEnvironment.WebRootPath, "uploads/category");
-                    string filePath = Path.Combine(uploadsFolder, fileName);
-                    using (var fileStream = new FileStream(filePath, FileMode.Create))
-                    {
-                        sCat.Image.CopyToAsync(fileStream);
-                    }
+					using (var fs = new FileStream(_iHostEnv.WebRootPath + "\\uploads/category\\" + file.FileName, FileMode.Create, FileAccess.Write))
+					{
+						file.CopyTo(fs);
+					}
+					sCat.ImagePath = "~/uploads/category/" + file.FileName;
+
+					string[] str = oldimageurl.Split("/");
+					string str1 = (str[str.Length - 1]);
+					string path = _iHostEnv.WebRootPath + "\\uploads/category\\" + str1;
+					System.IO.File.Delete(path);
+                }
+                else
+                {
+                    sCat.ImagePath = oldimageurl;
                 }
 
                 var subCategory = new SubCategory
@@ -162,7 +163,7 @@ namespace ECommerceProject.Controllers
                     Id = sCat.Id,
                     Name = sCat.Name,
                     Subtitle = sCat.Subtitle,
-                    Image = fileName ?? subCategoryService.GetSubCategoryById(sCat.Id).Image,
+                    Image = sCat.ImagePath,
                     MainCategoryId = sCat.MainCategoryId
                 };
 

@@ -69,6 +69,14 @@ namespace ECommerceProject.Repositories
 			{
 				return null;
 			}
+
+
+		}
+
+		public IEnumerable<SubCategory> GetSubCategoriesByMainCategoryId(int mainCategoryId)
+		{
+			return db.SubCategories.Where(sc => sc.MainCategoryId == mainCategoryId).ToList();
+
 		}
 	}
 }

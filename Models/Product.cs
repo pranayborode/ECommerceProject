@@ -25,9 +25,9 @@ namespace ECommerceProject.Models
         [Required]
         public bool IsAvailable { get; set; }
 
-        [Required]
+        /*[Required]
         [StringLength(50)]
-        public string SKU { get; set; }
+        public string SKU { get; set; }*/
 
         public string? Image { get; set; }
 
@@ -41,6 +41,7 @@ namespace ECommerceProject.Models
         // Foreign key properties
         public int MainCategoryId { get; set; }
         public int SubCategoryId { get; set; }
+        [Required]
         public int BrandId { get; set; }
 
         // Navigation properties

@@ -1,30 +1,31 @@
 ﻿using ECommerceProject.Data;
 using ECommerceProject.Models;
+using Microsoft.EntityFrameworkCore;
 
 namespace ECommerceProject.Repositories
 {
 	public class ProductRepository : IProductRepository
 	{
-		private readonly ApplicationDbContext db;
-		public ProductRepository(ApplicationDbContext db)
+		private readonly ApplicationDbContext _context;
+		public ProductRepository(ApplicationDbContext _context)
         {
-            this.db = db;
+            this._context = _context;
         }
         public int AddProduct(Product product)
 		{
 			int result = 0;
-			db.Products.Add(product);
-			result = db.SaveChanges();
+			_context.Products.Add(product);
+			result = _context.SaveChanges();
 			return result;
 		}
 
 		public int DeleteProduct(int id)
 		{
-			var product = db.Products.Find(id);
+			var product = _context.Products.Find(id);
 			if(product != null)
 			{
-				db.Products.Remove(product);
-				int result = db.SaveChanges();
+				_context.Products.Remove(product);
+				int result = _context.SaveChanges();
 				return result;
 			}
 			else
@@ -35,7 +36,7 @@ namespace ECommerceProject.Repositories
 
 		public int EditProduct(Product product)
 		{
-			var pro = db.Products.Find(product.ProductId);
+			var pro = _context.Products.Find(product.ProductId);
 			if(pro != null)
 			{
 				pro.Name = product.Name;
@@ -43,13 +44,12 @@ namespace ECommerceProject.Repositories
 				pro.Price = product.Price;
 				pro.Stock = product.Stock;
 				pro.IsAvailable = product.IsAvailable;
-				pro.SKU = product.SKU;
 				pro.Image = product.Image;
 				pro.OfferPercentage = product.OfferPercentage;
 				pro.MainCategory = product.MainCategory;
 				pro.SubCategory = product.SubCategory;
 				pro.Brand = product.Brand;
-				int result = db.SaveChanges();
+				int result = _context.SaveChanges();
 				return result;
 
 			}
@@ -61,8 +61,12 @@ namespace ECommerceProject.Repositories
 
 		public Product GetProductById(int id)
 		{
-			var product = db.Products.Find(id);
-			if(product != null)
+			var product = _context.Products
+				.Include(p => p.MainCategory)
+                .Include(p => p.SubCategory)
+                .Include(p => p.Brand)
+                .FirstOrDefault(p => p.ProductId == id);
+            if (product != null)
 			{
 				return product;
 			}
@@ -74,7 +78,30 @@ namespace ECommerceProject.Repositories
 
 		public IEnumerable<Product> GetProducts()
 		{
-			return db.Products.ToList();
+			return _context.Products
+				.Include(p=>p.MainCategory)
+				.Include(p=>p.SubCategory)
+				.Include(p=>p.Brand)
+				.ToList();
 		}
-	}
+
+		// To GET Similar Products by SubCategory in QuickView 
+		public IEnumerable<Product> GetSimilarProducts(int productId)
+		{
+			var product = _context.Products.Find(productId);
+			if (product != null)
+			{
+                return _context.Products
+           .Where(p => p.SubCategoryId == product.SubCategoryId && p.ProductId != productId)
+           .ToList();
+            }
+            return new List<Product>();
+        }
+
+		// To Display SoldOut Products Count in Dashboard 
+		public int GetSoldOutProductsCount()
+        {
+            return _context.Products.Count(p => !p.IsAvailable);
+        }
+    }
 }

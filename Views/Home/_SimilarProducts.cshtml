@@ -1,0 +1,36 @@
+﻿@model IEnumerable<ECommerceProject.Models.Product>
+
+<section class="bg-light border-top py-4">
+    <div class="container">
+        <div class="row gx-12">
+            <div class="px-0 border rounded-2 shadow-0">
+                <div class="card">
+                    <div class="card-body">
+                        <h2 class="card-title fw-bold">Similar items</h2><br />
+                        <div class="col-md-12 mt-2">
+                            <div class="row">
+                                @foreach (var item in Model)
+                                {
+                                    <div class="col-lg-3 mb-3">
+                                        <div class="d-flex">
+                                            <a href="#" class="me-1">
+                                                <img src="~/uploads/product/@item.Image" style="min-width: 96px; height: 96px;" class="img-md img-thumbnail" />
+                                            </a>
+                                            <div class="info">
+                                                <a asp-action="QuickView" asp-route-id="@item.ProductId" class="nav-link mb-1">
+                                                    <div>@Html.DisplayFor(modelItem => item.Name)</div>
+                                                    <div>@Html.DisplayFor(modelItem => item.Brand.Name)</div>
+                                                    <div><strong class="text-dark">@item.Price</strong></div>
+                                                </a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                }
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>

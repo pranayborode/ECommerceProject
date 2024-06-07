@@ -36,5 +36,10 @@ namespace ECommerceProject.Services
 		{
 			return repo.GetSubCategoryById(id);
 		}
+
+		public IEnumerable<SubCategory> GetSubCategoriesByMainCategoryId(int mainCategoryId)
+		{
+			return repo.GetSubCategoriesByMainCategoryId((int)mainCategoryId);
+		}
 	}
 }

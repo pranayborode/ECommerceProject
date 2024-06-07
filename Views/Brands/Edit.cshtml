@@ -20,13 +20,13 @@
             </div>
             <div class="form-group">
                 <label asp-for="Image" class="control-label"></label>
-                <input asp-for="Image" class="form-control" />
+                <input asp-for="Image" name="file" type="file" class="form-control" />
                 <span asp-validation-for="Image" class="text-danger"></span>
             </div>
             @if (!string.IsNullOrEmpty(Model.ImagePath))
             {
                 <div>
-                    <img src="~/uploads/brand/@Model.ImagePath" width="100" height="100" />
+                    <img src="~/uploads/category/@Model.ImagePath" width="100" height="100" />
                 </div>
             }
             <div class="form-group">

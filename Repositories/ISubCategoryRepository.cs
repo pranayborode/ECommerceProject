@@ -9,5 +9,7 @@ namespace ECommerceProject.Repositories
 		int AddSubCategory(SubCategory subCategory);
 		int EditSubCategory(SubCategory subCategory);
 		int DeleteSubCategory(int id);
+
+		IEnumerable<SubCategory> GetSubCategoriesByMainCategoryId(int mainCategoryId);
 	}
 }

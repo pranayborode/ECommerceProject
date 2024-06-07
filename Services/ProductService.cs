@@ -35,5 +35,15 @@ namespace ECommerceProject.Services
 		{
 			return repo.GetProducts();
 		}
-	}
+
+		public IEnumerable<Product> GetSimilarProducts(int productId)
+		{
+			return repo.GetSimilarProducts(productId);
+		}
+
+		public int GetSoldOutProductsCount()
+        {
+            return repo.GetSoldOutProductsCount();
+        }
+    }
 }

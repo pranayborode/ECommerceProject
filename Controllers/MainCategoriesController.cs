@@ -13,14 +13,14 @@ namespace ECommerceProject.Controllers
 	{
 
 		private readonly IMainCategoryService service;
-		private readonly IWebHostEnvironment webHostEnvironment;
+        private Microsoft.AspNetCore.Hosting.IHostingEnvironment _iHostEnv;
 
-		public MainCategoriesController(
+        public MainCategoriesController(
 			IMainCategoryService service,
-			IWebHostEnvironment webHostEnvironment)
+            Microsoft.AspNetCore.Hosting.IHostingEnvironment _iHostEnv)
         {
             this.service = service;
-			this.webHostEnvironment = webHostEnvironment;
+			this._iHostEnv = _iHostEnv;
         }
 
         // GET: MainCategoriesController
@@ -46,24 +46,24 @@ namespace ECommerceProject.Controllers
 		// POST: MainCategoriesController/Create
 		[HttpPost]
 		[ValidateAntiForgeryToken]
-		public async Task<IActionResult> Create(MainCategoryViewModel mCat)
+		public async Task<IActionResult> Create(MainCategoryViewModel mCat, IFormFile file)
 		{
 			try
 			{
-				string fileName = "";
-				if (mCat.Image != null)
-				{
-					string uploadsFolder = Path.Combine(webHostEnvironment.WebRootPath, "uploads/category");
-					fileName = Guid.NewGuid().ToString() + "_" + mCat.Image.FileName;
-					string filePath = Path.Combine(uploadsFolder, fileName);
-					mCat.Image.CopyTo(new FileStream(filePath, FileMode.Create));
+                using (var fs = new FileStream(_iHostEnv.WebRootPath + "\\uploads/category\\" + file.FileName, FileMode.Create, FileAccess.Write))
+                {
+                    file.CopyTo(fs);
+                }
+
+                mCat.ImagePath = "~/uploads/category/" + file.FileName;
 
 
-					MainCategory mainCategory = new MainCategory
+
+                MainCategory mainCategory = new MainCategory
 					{
 						Name = mCat.Name,
 						Subtitle = mCat.Subtitle,
-						Image = fileName
+						Image = mCat.ImagePath
 					};
 
 
@@ -79,8 +79,7 @@ namespace ECommerceProject.Controllers
 						return View();
 					}
 					
-				}
-				return View();
+				
 			}
 			catch (Exception ex)
 			{
@@ -93,6 +92,8 @@ namespace ECommerceProject.Controllers
         public async Task<IActionResult> Edit(int id)
 		{
             var mCat = service.GetMainCategoryById(id);
+            HttpContext.Session.SetString("oldImageUrl", mCat.Image);
+
             if (mCat == null)
             {
                 return NotFound();
@@ -116,20 +117,29 @@ namespace ECommerceProject.Controllers
 		// POST: MainCategoriesController/Edit/5
 		[HttpPost]
 		[ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(MainCategoryViewModel mCat)
+        public async Task<IActionResult> Edit(MainCategoryViewModel mCat,IFormFile file)
 		{
             try
             {
-                string fileName = mCat.Image != null ? Guid.NewGuid().ToString() + "_" + mCat.Image.FileName : null;
+                string oldimageurl = HttpContext.Session.GetString("oldImageUrl");
 
-                if (mCat.Image != null)
+                if (file != null)
                 {
-                    string uploadsFolder = Path.Combine(webHostEnvironment.WebRootPath, "uploads/category");
-                    string filePath = Path.Combine(uploadsFolder, fileName);
-                    using (var fileStream = new FileStream(filePath, FileMode.Create))
+                    using (var fs = new FileStream(_iHostEnv.WebRootPath + "\\uploads/category\\" + file.FileName, FileMode.Create, FileAccess.Write))
                     {
-                        await mCat.Image.CopyToAsync(fileStream);
+                        file.CopyTo(fs);
                     }
+                    mCat.ImagePath = "~/uploads/category/" + file.FileName;
+
+                    string[] str = oldimageurl.Split("/");
+                    string str1 = (str[str.Length - 1]);
+                    string path = _iHostEnv.WebRootPath + "\\uploads/category\\" + str1;
+                    System.IO.File.Delete(path);
+
+				}
+				else
+				{
+                    mCat.ImagePath = oldimageurl;
                 }
 
                 var mainCategory = new MainCategory
@@ -137,7 +147,7 @@ namespace ECommerceProject.Controllers
                     Id = mCat.Id,
                     Name = mCat.Name,
                     Subtitle = mCat.Subtitle,
-                    Image = fileName ?? service.GetMainCategoryById(mCat.Id).Image
+                    Image = mCat.ImagePath
                 };
 
                 int result = service.EditMainCategory(mainCategory);

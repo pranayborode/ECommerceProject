@@ -41,6 +41,15 @@ builder.Services.AddScoped<IProductService, ProductService>();
 builder.Services.AddScoped<IBrandRepository, BrandRepository>();
 builder.Services.AddScoped<IBrandService, BrandService>();
 
+
+//configuration of session------------------------------------------------- 2
+builder.Services.AddSession(options =>
+{
+	options.IdleTimeout = TimeSpan.FromMinutes(5);
+	options.Cookie.IsEssential = true;
+});
+
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -63,8 +72,8 @@ app.UseRouting();
 app.UseAuthentication();
 app.UseAuthorization();
 
-
-
+// for session-------------------------------2
+app.UseSession();
 
 app.MapControllerRoute(
 	name: "default",

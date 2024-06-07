@@ -8,7 +8,7 @@ namespace ECommerceProject.Models
 		[Key]
 		public int ProductImageId { get; set; }
 
-		[NotMapped] // Not mapped to the database
+		[NotMapped] 
 		public byte[] ImageData { get; set; } // Byte array to store image data
 
 		[Required]

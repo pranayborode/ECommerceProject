@@ -38,19 +38,15 @@
             @Html.DisplayNameFor(model => model.IsAvailable)
         </dt>
         <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.IsAvailable)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.SKU)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.SKU)
+            <span class="@(Model.IsAvailable ? "available" : "soldout")">
+                @(Model.IsAvailable ? "Available" : "Sold Out")
+            </span>
         </dd>
         <dt class = "col-sm-2">
             @Html.DisplayNameFor(model => model.Image)
         </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Image)
+        <dd class="col-sm-10">
+            <img src="~/uploads/product/@Model.Image" alt="Image" style="width:auto; height:100px;" />
         </dd>
         <dt class = "col-sm-2">
             @Html.DisplayNameFor(model => model.OfferPercentage)
