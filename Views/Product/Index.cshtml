@@ -82,7 +82,7 @@
 					@Html.DisplayFor(modelItem => item.Image)
 					</td> *@
 						<td>
-							<img src=" ../uploads/product/@Html.DisplayFor(modelItem => item.Image)" alt="Alternate Text" style="width:auto; height:70px;" />
+							<img src="@Url.Content(item.Image)" style="width:auto; height:70px;" />
 						</td>
 						
 						<td>

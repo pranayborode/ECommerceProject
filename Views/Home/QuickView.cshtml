@@ -11,24 +11,25 @@
             <aside class="col-lg-6">
                 <div class="border rounded-4 mb-3 d-flex justify-content-center">
                     <a data-fslightbox="mygalley" class="rounded-4" target="_blank" data-type="image" href="https://mdbcdn.b-cdn.net/img/bootstrap-ecommerce/items/detail1/big.webp">
-                        <img src="~/uploads/product/@Model.Product.Image" style="max-width: 100%; max-height: 80vh; margin: auto;" class="rounded-4 fit" />
+                        @* <img src="~/uploads/product/@Model.Product.Image" style="max-width: 100%; max-height: 80vh; margin: auto;" class="rounded-4 fit" /> *@
+                        <img src="@Url.Content(Model.Product.Image)" alt="@Model.Product.Name" style="max-width: 100%; max-height: 80vh; margin: auto;" class="rounded-4 fit" />
                     </a>
                 </div>
                 <div class="d-flex justify-content-center mb-3">
-                    <a data-fslightbox="mygalley" class="border mx-1 rounded-2" target="_blank" data-type="image" href="~/uploads/product/@Model.Product.Image" class="item-thumb">
-                        <img width="60" height="60" class="rounded-2" src="~/uploads/product/@Model.Product.Image" />
+                    <a data-fslightbox="mygalley" class="border mx-1 rounded-2" target="_blank" data-type="image" href="@Url.Content(Model.Product.Image)" class="item-thumb">
+                        <img width="60" height="60" class="rounded-2" src="@Url.Content(Model.Product.Image)" />
+                    </a>
+                    <a data-fslightbox="mygalley" class="border mx-1 rounded-2" target="_blank" data-type="image" href="@Url.Content(Model.Product.Image)" class="item-thumb">
+                        <img width="60" height="60" class="rounded-2" src="@Url.Content(Model.Product.Image)" />
+                    </a>
+                    <a data-fslightbox="mygalley" class="border mx-1 rounded-2" target="_blank" data-type="image" href="@Url.Content(Model.Product.Image)" class="item-thumb">
+                        <img width="60" height="60" class="rounded-2" src="@Url.Content(Model.Product.Image)" />
+                    </a>
+                    <a data-fslightbox="mygalley" class="border mx-1 rounded-2" target="_blank" data-type="image" href="@Url.Content(Model.Product.Image)" class="item-thumb">
+                        <img width="60" height="60" class="rounded-2" src="@Url.Content(Model.Product.Image)" />
                     </a>
                     <a data-fslightbox="mygalley" class="border mx-1 rounded-2" target="_blank" data-type="image" href="~/uploads/product/@Model.Product.Image" class="item-thumb">
-                        <img width="60" height="60" class="rounded-2" src="~/uploads/product/@Model.Product.Image" />
-                    </a>
-                    <a data-fslightbox="mygalley" class="border mx-1 rounded-2" target="_blank" data-type="image" href="~/uploads/product/@Model.Product.Image" class="item-thumb">
-                        <img width="60" height="60" class="rounded-2" src="~/uploads/product/@Model.Product.Image" />
-                    </a>
-                    <a data-fslightbox="mygalley" class="border mx-1 rounded-2" target="_blank" data-type="image" href="https://mdbcdn.b-cdn.net/img/bootstrap-ecommerce/items/detail1/big4.webp" class="item-thumb">
-                        <img width="60" height="60" class="rounded-2" src="~/uploads/product/@Model.Product.Image" />
-                    </a>
-                    <a data-fslightbox="mygalley" class="border mx-1 rounded-2" target="_blank" data-type="image" href="https://mdbcdn.b-cdn.net/img/bootstrap-ecommerce/items/detail1/big.webp" class="item-thumb">
-                        <img width="60" height="60" class="rounded-2" src="~/uploads/product/@Model.Product.Image" />
+                        <img width="60" height="60" class="rounded-2" src="@Url.Content(Model.Product.Image)" />
                     </a>
                 </div>
                 <!-- thumbs-wrap.// -->

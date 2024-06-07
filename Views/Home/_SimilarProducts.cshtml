@@ -14,7 +14,7 @@
                                     <div class="col-lg-3 mb-3">
                                         <div class="d-flex">
                                             <a href="#" class="me-1">
-                                                <img src="~/uploads/product/@item.Image" style="min-width: 96px; height: 96px;" class="img-md img-thumbnail" />
+                                                <img src="@Url.Content(item.Image)" style="min-width: 96px; height: 96px;" class="img-md img-thumbnail" />
                                             </a>
                                             <div class="info">
                                                 <a asp-action="QuickView" asp-route-id="@item.ProductId" class="nav-link mb-1">

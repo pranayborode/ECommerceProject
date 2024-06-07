@@ -142,6 +142,9 @@ namespace ECommerceProject.Controllers
                     string path = _iHostEnv.WebRootPath + "\\uploads/brand\\" + str1;
                     System.IO.File.Delete(path);
 
+                }else
+                {
+                    brandViewModel.ImagePath = oldImageUrl;
                 }
 
                 Brand brand = new Brand

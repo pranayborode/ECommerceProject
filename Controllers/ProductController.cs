@@ -14,8 +14,8 @@ namespace ECommerceProject.Controllers
 	public class ProductController : Controller
 	{
 		private readonly ApplicationDbContext _context;
-		private readonly IProductService service;
-		private readonly IWebHostEnvironment webHostEnvironment;
+		private Microsoft.AspNetCore.Hosting.IHostingEnvironment _iHostEnv;
+        private readonly IProductService service;
 		private readonly ISubCategoryService subCategoryService;
 		private readonly IMainCategoryService mainCategoryService;
 		private readonly IBrandService brandService;
@@ -24,15 +24,15 @@ namespace ECommerceProject.Controllers
 
 		public ProductController(
 			ApplicationDbContext _context,
-			IProductService service,
-			IWebHostEnvironment webHostEnvironment,
+            Microsoft.AspNetCore.Hosting.IHostingEnvironment _iHostEnv,
+            IProductService service,
 			ISubCategoryService subCategoryService,
 			IMainCategoryService mainCategoryService,
 			IBrandService brandService)
 		{
 			this._context = _context;
+			this._iHostEnv = _iHostEnv;
 			this.service = service;
-			this.webHostEnvironment = webHostEnvironment;
 			this.subCategoryService = subCategoryService;
 			this.mainCategoryService = mainCategoryService;
 			this.brandService = brandService;
@@ -77,28 +77,25 @@ namespace ECommerceProject.Controllers
 		[HttpPost]
 		[ValidateAntiForgeryToken]
 		[Authorize(Roles = "Admin")]
-		public ActionResult Create(ProductViewModel product)
+		public ActionResult Create(ProductViewModel product, IFormFile file)
 		{
 			try
 			{
-				string fileName = "";
-				if (product.Image != null)
-				{
-					string uploadsFolder = Path.Combine(webHostEnvironment.WebRootPath, "uploads/product");
-					fileName = Guid.NewGuid().ToString() + "_" + product.Image.FileName;
-					string filePath = Path.Combine(uploadsFolder, fileName);
-					product.Image.CopyTo(new FileStream(filePath, FileMode.Create));
+                using (var fs = new FileStream(_iHostEnv.WebRootPath + "\\uploads/product\\" + file.FileName, FileMode.Create, FileAccess.Write))
+                {
+                    file.CopyTo(fs);
+                }
 
+                product.ImagePath = "~/uploads/product/" + file.FileName;
 
-					var pro = new Product
+                var pro = new Product
 					{
 						Name = product.Name,
 						Description = product.Description,
 						Price = product.Price,
 						Stock = product.Stock,
 						IsAvailable = product.IsAvailable,
-						
-						Image = fileName,
+						Image = product.ImagePath,
 						OfferPercentage = product.OfferPercentage,
 						MainCategoryId = product.MainCategoryId,
 						SubCategoryId = product.SubCategoryId,
@@ -118,15 +115,7 @@ namespace ECommerceProject.Controllers
 						product.Brands = brandService.GetBrands().ToList();
 						return View(product);
 					}
-				}
-				else
-				{
-                    product.MainCategories = mainCategoryService.GetMainCategories().ToList();
-                    product.SubCategories = subCategoryService.GetSubCategories().ToList();
-                    product.Brands = brandService.GetBrands().ToList();
-                    return View(product);
-                }
-
+			
 				
 
 			}
@@ -147,7 +136,8 @@ namespace ECommerceProject.Controllers
 		public ActionResult Edit(int id)
 		{
 			var product = service.GetProductById(id);
-			if (product == null)
+            HttpContext.Session.SetString("oldImageUrl", product.Image);
+            if (product == null)
 			{
 				return NotFound();
 			}
@@ -160,7 +150,6 @@ namespace ECommerceProject.Controllers
 				Price = product.Price,
 				Stock = product.Stock,
 				IsAvailable = product.IsAvailable,
-				
 				ImagePath = product.Image,
 				OfferPercentage = product.OfferPercentage,
 				MainCategoryId = product.MainCategoryId,
@@ -181,25 +170,33 @@ namespace ECommerceProject.Controllers
 		[Authorize(Roles = "Admin")]
 		[HttpPost]
 		[ValidateAntiForgeryToken]
-		public async Task<ActionResult> Edit(ProductViewModel product)
+		public async Task<ActionResult> Edit(ProductViewModel product, IFormFile file)
 		{
 			try
 			{
 
-				
-				string fileName = product.Image != null ? Guid.NewGuid().ToString() + "_" +product.Image.FileName : null;
 
-                if (product.Image != null)
-				{
-					string uploadsFolder = Path.Combine(webHostEnvironment.WebRootPath, "uploads/product");
-					string filePath = Path.Combine(uploadsFolder, fileName);
-					using (var fileStream = new FileStream(filePath, FileMode.Create))
-					{
-						product.Image.CopyToAsync(fileStream);
-					}
-				}
+                string oldimageurl = HttpContext.Session.GetString("oldImageUrl");
 
-				Product pro = new Product
+                if (file != null)
+                {
+                    using (var fs = new FileStream(_iHostEnv.WebRootPath + "\\uploads/product\\" + file.FileName, FileMode.Create, FileAccess.Write))
+                    {
+                        file.CopyTo(fs);
+                    }
+                    product.ImagePath = "~/uploads/product/" + file.FileName;
+
+                    string[] str = oldimageurl.Split("/");
+                    string str1 = (str[str.Length - 1]);
+                    string path = _iHostEnv.WebRootPath + "\\uploads/product\\" + str1;
+                    System.IO.File.Delete(path);
+                }
+                else
+                {
+                    product.ImagePath = oldimageurl;
+                }
+
+                Product pro = new Product
 				{
 					ProductId = product.ProductId,
 					Name = product.Name,
@@ -207,8 +204,7 @@ namespace ECommerceProject.Controllers
 					Price = product.Price,
 					Stock = product.Stock,
 					IsAvailable = product.IsAvailable,
-					
-					Image = fileName ?? service.GetProductById(product.ProductId).Image,
+					Image = product.ImagePath,
 					OfferPercentage = product.OfferPercentage,
 					MainCategoryId = product.MainCategoryId,
 					SubCategoryId = product.SubCategoryId,
