@@ -27,7 +27,19 @@ namespace ECommerceProject.Repositories
 
 			if (cart != null)
 			{
-				_context.CartItems.Add(cartItem);
+				var existingCartItem = cart.CartItems.FirstOrDefault(ci => ci.ProductId == cartItem.ProductId && ci.Size == cartItem.Size);
+
+				if (existingCartItem != null)
+				{
+					// Increase the quantity of the existing item
+					existingCartItem.Quantity += cartItem.Quantity;
+					_context.CartItems.Update(existingCartItem);
+				}
+				else
+				{
+					// Add new item to the cart
+					_context.CartItems.Add(cartItem);
+				}
 				_context.SaveChanges();
 				UpdateCartTotal(cart.CartId);
 			}
