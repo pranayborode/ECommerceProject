@@ -11,6 +11,7 @@ using ECommerceProject.ViewModels;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Authorization;
 using ECommerceProject.Services;
+using System.Drawing.Drawing2D;
 
 namespace ECommerceProject.Controllers
 {
@@ -61,7 +62,7 @@ namespace ECommerceProject.Controllers
         {
             try
             {
-                using (var fs = new FileStream(_iHostEnv.WebRootPath+ "\\uploads/brand\\" + file.FileName, FileMode.Create, FileAccess.Write))
+                using (var fs = new FileStream(_iHostEnv.WebRootPath + "\\uploads/brand\\" + file.FileName, FileMode.Create, FileAccess.Write))
                 {
                     file.CopyTo(fs);
                 }
@@ -69,25 +70,25 @@ namespace ECommerceProject.Controllers
                 brandViewModel.ImagePath = "~/uploads/brand/" + file.FileName;
 
                 var _brand = new Brand
-                    {
-                        Name = brandViewModel.Name,
-                        Image = brandViewModel.ImagePath
-                    };
+                {
+                    Name = brandViewModel.Name,
+                    Image = brandViewModel.ImagePath
+                };
 
 
-                    int result = service.AddBrand(_brand);
+                int result = service.AddBrand(_brand);
 
-                    if (result >= 1)
-                    {
-                        return RedirectToAction(nameof(Index));
-                    }
-                    else
-                    {
-                        ViewBag.ErrorMsg = "Something went wrong...";
-                        return View();
-                    }
+                if (result >= 1)
+                {
+                    return RedirectToAction(nameof(Index));
+                }
+                else
+                {
+                    ViewBag.ErrorMsg = "Something went wrong...";
+                    return View();
+                }
 
-              
+
             }
             catch (Exception ex)
             {
@@ -103,7 +104,7 @@ namespace ECommerceProject.Controllers
 
 
             var brand = service.GetBrandById(id);
-            HttpContext.Session.SetString("oldImageUrl",brand.Image);
+            HttpContext.Session.SetString("oldImageUrl", brand.Image);
             if (brand == null)
             {
                 return NotFound();
@@ -129,9 +130,9 @@ namespace ECommerceProject.Controllers
 
                 string oldImageUrl = HttpContext.Session.GetString("oldImageUrl");
 
-                if(file != null)
+                if (file != null)
                 {
-                    using (var fs = new FileStream(_iHostEnv.WebRootPath+ "\\uploads/brand\\"+file.FileName,FileMode.Create, FileAccess.Write))
+                    using (var fs = new FileStream(_iHostEnv.WebRootPath + "\\uploads/brand\\" + file.FileName, FileMode.Create, FileAccess.Write))
                     {
                         file.CopyTo(fs);
                     }
@@ -142,7 +143,8 @@ namespace ECommerceProject.Controllers
                     string path = _iHostEnv.WebRootPath + "\\uploads/brand\\" + str1;
                     System.IO.File.Delete(path);
 
-                }else
+                }
+                else
                 {
                     brandViewModel.ImagePath = oldImageUrl;
                 }
@@ -162,13 +164,13 @@ namespace ECommerceProject.Controllers
                 else
                 {
                     ViewBag.ErrorMsg = "Something went wrong...";
-                    return View();
+                    return View(brandViewModel);
                 }
             }
             catch (Exception ex)
             {
                 ViewBag.ErrorMessage = ex.Message;
-                return View();
+                return View(brandViewModel);
             }
 
 
@@ -178,6 +180,7 @@ namespace ECommerceProject.Controllers
         public async Task<IActionResult> Delete(int id)
         {
             var model = service.GetBrandById(id);
+            HttpContext.Session.SetString("oldImageUrl", model.Image);
             return View(model);
 
 
@@ -190,15 +193,23 @@ namespace ECommerceProject.Controllers
         {
             try
             {
+                string oldImageUrl = HttpContext.Session.GetString("oldImageUrl");
+
                 if (id == null || service.GetBrands == null)
                 {
                     return NotFound();
                 }
 
+               
+
                 var result = service.DeleteBrand(id);
 
                 if (result >= 1)
                 {
+                    string[] str = oldImageUrl.Split("/");
+                    string str1 = (str[str.Length - 1]);
+                    string path = _iHostEnv.WebRootPath + "\\uploads/brand\\" + str1;
+                    System.IO.File.Delete(path);
                     return RedirectToAction(nameof(Index));
                 }
                 else

@@ -31,7 +31,6 @@ namespace ECommerceProject.Services
 		{
 			return repo.GetMainCategories();
 		}
-
 		public MainCategory GetMainCategoryById(int id)
 		{
 			return repo.GetMainCategoryById(id);

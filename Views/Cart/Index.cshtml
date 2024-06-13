@@ -1,0 +1,311 @@
+﻿@model ECommerceProject.Models.Cart
+
+@{
+	ViewData["Title"] = "Shopping Cart";
+}
+@{
+	ViewData["Title"] = "Shopping Cart";
+	decimal subtotal = 0;
+	decimal amountForFreeDelivery = 0;
+	int progressPercentage = 0;
+	string formattedFreeDeliveryThreshold = "";
+	string formattedAmountForFreeDelivery = "";
+	if (Model != null && Model.CartItems != null && Model.CartItems.Any())
+	{
+		const decimal FreeDeliveryThreshold = 499;
+		subtotal = Model.CartItems.Sum(item => item.Quantity * item.DiscountedPrice);
+		amountForFreeDelivery = FreeDeliveryThreshold - subtotal;
+		progressPercentage = (int)((subtotal / FreeDeliveryThreshold) * 100);
+
+		formattedFreeDeliveryThreshold = ((int)FreeDeliveryThreshold).ToString("C0");
+		formattedAmountForFreeDelivery = ((int)amountForFreeDelivery).ToString("C0");
+	}
+}
+
+<h2 class="mt-4">@ViewData["Title"]</h2>
+
+@if (Model == null || !Model.CartItems.Any())
+{
+	<p>Your cart is empty.</p>
+}
+else
+{
+	<div class="container mb-5">
+		<div class="shopping-cart">
+			<div class="cart-items">
+				@foreach (var item in Model.CartItems)
+				{
+					<div class="cart-item">
+						@* <div class="mr-2">
+				<input type="checkbox" id="item@item.CartItemId" />
+				</div> *@
+						<div>
+							<img src="@Url.Content(item.Product.Image)" alt="Product Image" />
+						</div>
+						<div class="cart-item-details">
+							<p>@item.Product.Name</p>
+							<p>
+								<span class="original-price">@item.Price.ToString("C")</span>
+								<span class="discounted-price">@item.DiscountedPrice.ToString("C")</span>
+								<span class="discount-percentage">(@item.OfferPercentage% off)</span>
+							</p>
+							<div class="product-size-text">
+								<span>Size: @item.Size</span>
+							</div>
+							<div style="display: flex; align-items: center;">
+								<span class="product-size-text mr-1">Qty:</span>
+								<input type="number" class="quantity" value="@item.Quantity" min="1" onchange="updateQuantity(@item.CartItemId, this.value)" />
+								<div class="cart-item-actions a-size-small ml-3">
+									<form asp-action="RemoveFromCart" method="post" class="d-inline">
+										<input type="hidden" name="cartItemId" value="@item.CartItemId" />
+										<a href="#" onclick="this.closest('form').submit(); return false;" class="text-danger">Delete</a>
+									</form>
+									<i class="a-icon-text-separator" role="img" aria-label="|"></i>
+									<a href="#">Save for later</a>
+									<i class="a-icon-text-separator" role="img" aria-label="|"></i>
+									<a href="#">See more like this</a>
+									<i class="a-icon-text-separator" role="img" aria-label="|"></i>
+									<a href="#">Share</a>
+								</div>
+							</div>
+						</div>
+					</div>
+				}
+				<form asp-action="ClearCart" method="post" class="mt-2">
+					<button type="submit" class="btn btn-warning">Clear Cart</button>
+				</form>
+			</div>
+			<div class="summary">
+				<div class="progress-container">
+					<div class="progress">
+						<div class="progress-bar" role="progressbar" style="width: @progressPercentage%"></div>
+					</div>
+					<span class="progress-threshold">@formattedFreeDeliveryThreshold</span>
+				</div>
+				@if (subtotal < 499)
+				{
+					<div class="free-delivery-info">
+						
+						<p>Add items worth @formattedAmountForFreeDelivery for FREE Delivery</p>
+						<a asp-action="Index" asp-controller="Home">View Products ›</a>
+					</div>
+				}
+				else
+				{
+					<p>Your order is eligible for FREE Delivery.</p>
+				}
+				<div class="subtotal">
+					<span class="subtotal-title">Subtotal (@Model.TotalQuantity items):</span>
+					<span class="subtotal-amount">@subtotal.ToString("C")</span>
+				</div>
+				<div class="proceed-button">
+					<input type="button" value="Proceed to Buy" />
+				</div>
+			</div>
+		</div>
+	</div>
+}
+
+<style>
+	body {
+		font-family: Arial, sans-serif;
+	}
+
+	.container {
+		margin-bottom: 50px;
+		padding: 10px;
+	}
+
+	.shopping-cart {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 20px;
+	}
+
+	.cart-items {
+		flex: 1;
+		min-width: 300px;
+		max-width: 75%;
+	}
+
+	.summary {
+		flex: 0 0 300px;
+		padding: 20px;
+		border: 1px solid #ddd;
+		border-radius: 5px;
+	}
+
+	.cart-item {
+		display: flex;
+		align-items: center;
+		border-bottom: 1px solid #ddd;
+		padding: 15px 0;
+	}
+
+		.cart-item img {
+			width: 100px;
+			margin-right: 20px;
+		}
+
+	.cart-item-details {
+		flex: 1;
+	}
+
+	p {
+		margin: 0 0 0.5rem 0;
+	}
+
+	.price {
+		font-size: 18px;
+		font-weight: bold;
+	}
+
+	.original-price {
+		color: gray;
+		text-decoration: line-through;
+		margin-right: 10px;
+	}
+
+	.discounted-price {
+		font-size: 16px;
+		font-weight: bold;
+		margin-right: 10px;
+	}
+
+	.discount-percentage {
+		color: green;
+	}
+
+	.quantity {
+		width: 60px;
+		text-align: center;
+	}
+
+	.cart-item-actions {
+		display: flex;
+		align-items: center;
+		gap: 10px;
+	}
+
+		.cart-item-actions a {
+			color: #0073bb;
+			text-decoration: none;
+			cursor: pointer;
+		}
+
+	.subtotal {
+		margin-top: 20px;
+		text-align: left;
+	}
+
+	.subtotal-title {
+		font-size: 16px;
+	}
+
+	.subtotal-title {
+		font-size: 16px;
+	}
+
+	.subtotal-amount {
+		font-size: 16px;
+		font-weight: bold;
+	}
+
+	.proceed-button {
+		text-align: center;
+		margin-top: 20px;
+	}
+
+		.proceed-button input {
+			background-color: #f0c14b;
+			border: 1px solid #a88734;
+			padding: 8px 8px;
+			font-size: 16px;
+			cursor: pointer;
+		}
+
+	.a-icon-text-separator, .a-text-separator {
+		display: inline-block;
+		width: 1.5px;
+		background-color: #d4d4d4;
+		line-height: 0;
+		height: 14px;
+		vertical-align: middle;
+	}
+
+	.a-size-small {
+		font-size: 14px !important;
+		line-height: 16px !important;
+	}
+
+	.product-size-text {
+		font-size: 14px !important;
+		margin-top: 0;
+		margin-bottom: 0.2rem;
+	}
+
+	media (max-width: 768px) {
+		.shopping-cart
+
+	{
+		flex-direction: column;
+	}
+
+	.summary {
+		order: -1;
+		flex: 0 0 auto;
+	}
+
+	}
+
+	.free-delivery-info {
+		margin-bottom: 20px;
+	}
+
+	.progress-container {
+		display: flex;
+		align-items: center;
+	}
+
+	.progress {
+		background-color: #c1c1c1;
+		border-radius: 5px;
+		overflow: hidden;
+		height: 12px;
+		margin-top: 10px;
+		margin-bottom: 10px;
+		width: 80%;
+	}
+
+	.progress-bar {
+		background-color: #28a745;
+		height: 100%;
+		width: 0;
+		transition: width 0.6s ease;
+	}
+
+	.progress-threshold {
+		margin-left: 10px;
+		font-weight: bold;
+		color: #000;
+	}
+</style>
+<script>
+	function updateQuantity(cartItemId, quantity) {
+		$.ajax({
+			url: '@Url.Action("UpdateQuantity", "Cart")',
+			type: 'POST',
+			data: {
+				cartItemId: cartItemId,
+				quantity: quantity
+			},
+			success: function (response) {
+				console.log(response);
+				location.reload();
+			},
+			error: function (xhr, status, error) {
+				console.error(error);
+			}
+		});
+	}
+</script>

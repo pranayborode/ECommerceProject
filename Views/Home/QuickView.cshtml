@@ -1,148 +1,175 @@
 ﻿@model ECommerceProject.ViewModels.QuickViewModel
 
 @{
-    ViewData["Title"] = "QuickView";
+	ViewData["Title"] = "QuickView";
 }
 
 <!-- content -->
 <section class="py-5">
-    <div class="container">
-        <div class="row gx-5">
-            <aside class="col-lg-6">
-                <div class="border rounded-4 mb-3 d-flex justify-content-center">
-                    <a data-fslightbox="mygalley" class="rounded-4" target="_blank" data-type="image" href="https://mdbcdn.b-cdn.net/img/bootstrap-ecommerce/items/detail1/big.webp">
-                        @* <img src="~/uploads/product/@Model.Product.Image" style="max-width: 100%; max-height: 80vh; margin: auto;" class="rounded-4 fit" /> *@
-                        <img src="@Url.Content(Model.Product.Image)" alt="@Model.Product.Name" style="max-width: 100%; max-height: 80vh; margin: auto;" class="rounded-4 fit" />
-                    </a>
-                </div>
-                <div class="d-flex justify-content-center mb-3">
-                    <a data-fslightbox="mygalley" class="border mx-1 rounded-2" target="_blank" data-type="image" href="@Url.Content(Model.Product.Image)" class="item-thumb">
-                        <img width="60" height="60" class="rounded-2" src="@Url.Content(Model.Product.Image)" />
-                    </a>
-                    <a data-fslightbox="mygalley" class="border mx-1 rounded-2" target="_blank" data-type="image" href="@Url.Content(Model.Product.Image)" class="item-thumb">
-                        <img width="60" height="60" class="rounded-2" src="@Url.Content(Model.Product.Image)" />
-                    </a>
-                    <a data-fslightbox="mygalley" class="border mx-1 rounded-2" target="_blank" data-type="image" href="@Url.Content(Model.Product.Image)" class="item-thumb">
-                        <img width="60" height="60" class="rounded-2" src="@Url.Content(Model.Product.Image)" />
-                    </a>
-                    <a data-fslightbox="mygalley" class="border mx-1 rounded-2" target="_blank" data-type="image" href="@Url.Content(Model.Product.Image)" class="item-thumb">
-                        <img width="60" height="60" class="rounded-2" src="@Url.Content(Model.Product.Image)" />
-                    </a>
-                    <a data-fslightbox="mygalley" class="border mx-1 rounded-2" target="_blank" data-type="image" href="~/uploads/product/@Model.Product.Image" class="item-thumb">
-                        <img width="60" height="60" class="rounded-2" src="@Url.Content(Model.Product.Image)" />
-                    </a>
-                </div>
-                <!-- thumbs-wrap.// -->
-                <!-- gallery-wrap .end// -->
-            </aside>
-            <main class="col-lg-6">
-                <div class="ps-lg-3">
-                    <h3 class="title text-dark">
-                        @Html.DisplayFor(model => model.Product.Name) <br />
-                        <h5 class="text-danger">@Html.DisplayFor(model => model.Product.Brand.Name)</h5>
-                    </h3>
-                    <div class="d-flex flex-row my-3">
-                        <div class="text-warning mb-1 me-2">
-                            <i class="fa fa-star"></i>
-                            <i class="fa fa-star"></i>
-                            <i class="fa fa-star"></i>
-                            <i class="fa fa-star"></i>
-                            <i class="fas fa-star-half-alt"></i>
-                            <span class="ms-1">
-                                4.5
-                            </span>
-                        </div>
-                        <span class="text-muted"><i class="fas fa-shopping-basket fa-sm mx-1"></i>154 orders</span>
+	<div class="container">
+		<div class="row gx-5">
+			<aside class="col-lg-6">
+				<div class="border rounded-4 mb-3 d-flex justify-content-center">
+					<a data-fslightbox="mygalley" class="rounded-4" target="_blank" data-type="image" href="https://mdbcdn.b-cdn.net/img/bootstrap-ecommerce/items/detail1/big.webp">
+						@* <img src="~/uploads/product/@Model.Product.Image" style="max-width: 100%; max-height: 80vh; margin: auto;" class="rounded-4 fit" /> *@
+						<img src="@Url.Content(Model.Product.Image)" alt="@Model.Product.Name" style="max-width: 100%; max-height: 80vh; margin: auto;" class="rounded-4 fit" />
+					</a>
+				</div>
+				<div class="d-flex justify-content-center mb-3">
+					<a data-fslightbox="mygalley" class="border mx-1 rounded-2" target="_blank" data-type="image" href="@Url.Content(Model.Product.Image)" class="item-thumb">
+						<img width="60" height="60" class="rounded-2" src="@Url.Content(Model.Product.Image)" />
+					</a>
+					<a data-fslightbox="mygalley" class="border mx-1 rounded-2" target="_blank" data-type="image" href="@Url.Content(Model.Product.Image)" class="item-thumb">
+						<img width="60" height="60" class="rounded-2" src="@Url.Content(Model.Product.Image)" />
+					</a>
+					<a data-fslightbox="mygalley" class="border mx-1 rounded-2" target="_blank" data-type="image" href="@Url.Content(Model.Product.Image)" class="item-thumb">
+						<img width="60" height="60" class="rounded-2" src="@Url.Content(Model.Product.Image)" />
+					</a>
+					<a data-fslightbox="mygalley" class="border mx-1 rounded-2" target="_blank" data-type="image" href="@Url.Content(Model.Product.Image)" class="item-thumb">
+						<img width="60" height="60" class="rounded-2" src="@Url.Content(Model.Product.Image)" />
+					</a>
+					<a data-fslightbox="mygalley" class="border mx-1 rounded-2" target="_blank" data-type="image" href="~/uploads/product/@Model.Product.Image" class="item-thumb">
+						<img width="60" height="60" class="rounded-2" src="@Url.Content(Model.Product.Image)" />
+					</a>
+				</div>
+				<!-- thumbs-wrap.// -->
+				<!-- gallery-wrap .end// -->
+			</aside>
+			<main class="col-lg-6">
+				<div class="ps-lg-3">
+					<h3 class="title text-dark">
+						@Html.DisplayFor(model => model.Product.Name) <br />
+						<h5 class="text-danger">@Html.DisplayFor(model => model.Product.Brand.Name)</h5>
+					</h3>
+					<div class="d-flex flex-row my-3">
+						<div class="text-warning mb-1 me-2">
+							<i class="fa fa-star"></i>
+							<i class="fa fa-star"></i>
+							<i class="fa fa-star"></i>
+							<i class="fa fa-star"></i>
+							<i class="fas fa-star-half-alt"></i>
+							<span class="ms-1">
+								4.5
+							</span>
+						</div>
+						<span class="text-muted"><i class="fas fa-shopping-basket fa-sm mx-1"></i>154 orders</span>
 
-                        @if (Model.Product.IsAvailable)
-                        {
-                            <span class="text-success ms-2">In stock</span>
-                        }
-                        else
-                        {
-                            <span class="text-danger ms-2">Sold Out</span>
-                        }
-                    </div>
+						@if (Model.Product.IsAvailable)
+						{
+							<span class="text-success ms-2">In stock</span>
+						}
+						else
+						{
+							<span class="text-danger ms-2">Sold Out</span>
+						}
+					</div>
 
-                    <div class="mb-3">
-                        @if (Model.Product.OfferPercentage > 0)
-                        {
-                            <span class="text-danger mr-2 h2">@Html.DisplayFor(model => model.Product.OfferPercentage)%</span>
-                        }
-                        <span class="text-success large-text h5">@((int)(Model.Product.Price - (Model.Product.Price * (decimal)Model.Product.OfferPercentage / 100)))</span>
-                        <div class="text-muted d-flex">
-                            <del>$@Model.Product.Price</del>
-                        </div>
-                    </div>
+					<div class="mb-3">
+						@if (Model.Product.OfferPercentage > 0)
+						{
+							<span class="text-danger mr-2 h2">@Html.DisplayFor(model => model.Product.OfferPercentage)%</span>
+						}
+						<span class="text-success large-text h5">@((int)(Model.Product.Price - (Model.Product.Price * (decimal)Model.Product.OfferPercentage / 100)))</span>
+						<div class="text-muted d-flex">
+							<del>$@Model.Product.Price</del>
+						</div>
+					</div>
 
-                    <p>
-                        @Html.DisplayFor(model => model.Product.Description)
-                    </p>
+					<p>
+						@Html.DisplayFor(model => model.Product.Description)
+					</p>
 
-                    <div class="row">
-                        <dt class="col-3">Type:</dt>
-                        <dd class="col-9">Regular</dd>
+					<div class="row">
+						<dt class="col-3">Type:</dt>
+						<dd class="col-9">Regular</dd>
 
-                        <dt class="col-3">Color</dt>
-                        <dd class="col-9">Brown</dd>
+						<dt class="col-3">Color</dt>
+						<dd class="col-9">Brown</dd>
 
-                        <dt class="col-3">Material</dt>
-                        <dd class="col-9">Cotton, Jeans</dd>
+						<dt class="col-3">Material</dt>
+						<dd class="col-9">Cotton, Jeans</dd>
 
-                        <dt class="col-3">Brand</dt>
-                        <dd class="col-9">@Html.DisplayFor(model => model.Product.Brand.Name)</dd>
-                    </div>
+						<dt class="col-3">Brand</dt>
+						<dd class="col-9">@Html.DisplayFor(model => model.Product.Brand.Name)</dd>
+					</div>
 
-                    <hr />
+					<hr />
 
-                    <div class="row mb-4">
-                        <div class="col-md-4 col-6">
-                            <label class="mb-2">Size</label>
-                            <select class="form-select border border-secondary" style="height: 35px;">
-                                <option>Small</option>
-                                <option>Medium</option>
-                                <option>Large</option>
-                            </select>
-                        </div>
-                        <!-- col.// -->
-                        <div class="col-md-4 col-6 mb-3">
-                            <label class="mb-2 d-block">Quantity</label>
-                            <div class="input-group mb-3" style="width: 170px;">
-                                <button class="btn btn-white border border-secondary px-3" type="button" id="button-addon1" data-mdb-ripple-color="dark">
-                                    <i class="fas fa-minus"></i>
-                                </button>
-                                <input type="text" class="form-control text-center border border-secondary" placeholder="14" aria-label="Example text with button addon" aria-describedby="button-addon1" />
-                                <button class="btn btn-white border border-secondary px-3" type="button" id="button-addon2" data-mdb-ripple-color="dark">
-                                    <i class="fas fa-plus"></i>
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                    <a href="#" class="btn btn-warning shadow-0"> Buy now </a>
-                    <a href="#" class="btn btn-primary shadow-0"> <i class="me-1 fa fa-shopping-basket"></i> Add to cart </a>
-                    <a href="#" class="btn btn-light border border-secondary py-2 icon-hover px-3"> <i class="me-1 fa fa-heart fa-lg"></i> Save </a>
-                </div>
-            </main>
-        </div>
-    </div>
+					<form asp-action="AddToCart" asp-controller="Cart" method="post">
+						<input type="hidden" name="productId" value="@Model.Product.ProductId" />
+						<div class="row mb-4">
+							<div class="col-md-4 col-6">
+								<label class="mb-2">Size</label>
+								<select class="form-select border border-secondary" name="size" style="height: 35px;">
+									<option>Small</option>
+									<option>Medium</option>
+									<option>Large</option>
+								</select>
+							</div>
+							<!-- col.// -->
+							<div class="col-md-4 col-6 mb-3">
+								<label class="mb-2 d-block">Quantity</label>
+								<div class="input-group mb-3" style="width: 170px;">
+									<button class="btn btn-white border border-secondary px-3" type="button" id="button-minus" data-mdb-ripple-color="dark">
+										<i class="fas fa-minus"></i>
+									</button>
+									<input type="text" class="form-control text-center border border-secondary" name="quantity" id="quantity-input" value="1" aria-label="Example text with button addon" aria-describedby="button-addon1" />
+									<button class="btn btn-white border border-secondary px-3" type="button" id="button-plus" data-mdb-ripple-color="dark">
+										<i class="fas fa-plus"></i>
+									</button>
+								</div>
+							</div>
+						</div>
+						<a href="#" class="btn btn-warning shadow-0"> Buy now </a>
+						<button type="submit" class="btn btn-primary shadow-0">
+							<i class="me-1 fa fa-shopping-basket"></i> Add to cart
+						</button>
+						<a href="#" class="btn btn-light border border-secondary py-2 icon-hover px-3"> <i class="me-1 fa fa-heart fa-lg"></i> Save </a>
+					</form>
+				</div>
+			</main>
+		</div>
+	</div>
 </section>
 <!-- content -->
 <div class="container">
-    <partial name="_SimilarProducts" model="Model.SimilarProducts" />
+	<partial name="_SimilarProducts" model="Model.SimilarProducts" />
 </div>
 
 <style>
-    .icon-hover:hover {
-        border-color: #3b71ca !important;
-        background-color: white !important;
-        color: #3b71ca !important;
-    }
+	.icon-hover:hover {
+		border-color: #3b71ca !important;
+		background-color: white !important;
+		color: #3b71ca !important;
+	}
 
-        .icon-hover:hover i {
-            color: #3b71ca !important;
-        }
+		.icon-hover:hover i {
+			color: #3b71ca !important;
+		}
 
-    .card-title {
-        font-size: bold;
-    }
+	.card-title {
+		font-size: bold;
+	}
 </style>
+
+<script>
+	document.addEventListener('DOMContentLoaded', function () {
+		const minusButton = document.getElementById('button-minus');
+		const plusButton = document.getElementById('button-plus');
+		const quantityInput = document.getElementById('quantity-input');
+
+		minusButton.addEventListener('click', function () {
+			let currentValue = parseInt(quantityInput.value);
+			if (!isNaN(currentValue) && currentValue > 0) {
+				quantityInput.value = currentValue - 1;
+			}
+		});
+
+		plusButton.addEventListener('click', function () {
+			let currentValue = parseInt(quantityInput.value);
+			if (!isNaN(currentValue)) {
+				quantityInput.value = currentValue + 1;
+			}
+		});
+	});
+</script>

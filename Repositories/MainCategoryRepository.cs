@@ -50,7 +50,6 @@ namespace ECommerceProject.Repositories
 				return 0;
 			}
 		}
-
 		public IEnumerable<MainCategory> GetMainCategories()
 		{
 			return db.MainCategories.ToList();

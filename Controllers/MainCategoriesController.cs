@@ -57,15 +57,12 @@ namespace ECommerceProject.Controllers
 
                 mCat.ImagePath = "~/uploads/category/" + file.FileName;
 
-
-
                 MainCategory mainCategory = new MainCategory
 					{
 						Name = mCat.Name,
 						Subtitle = mCat.Subtitle,
 						Image = mCat.ImagePath
 					};
-
 
 					int result = service.AddMainCategory(mainCategory);
 				
@@ -77,9 +74,7 @@ namespace ECommerceProject.Controllers
 					{
 						ViewBag.ErrorMsg = "Something went wrong...";
 						return View();
-					}
-					
-				
+					}		
 			}
 			catch (Exception ex)
 			{
@@ -98,8 +93,7 @@ namespace ECommerceProject.Controllers
             {
                 return NotFound();
             }
-
-			
+	
 			var viewModel = new MainCategoryViewModel
 			{
 				Id = mCat.Id,
@@ -109,9 +103,7 @@ namespace ECommerceProject.Controllers
             };
 
             return View(viewModel);
-
-
-           
+   
 		}
 
 		// POST: MainCategoriesController/Edit/5
@@ -172,7 +164,8 @@ namespace ECommerceProject.Controllers
 		public ActionResult Delete(int id)
 		{
 			var mCat = service.GetMainCategoryById(id);
-			return View(mCat);
+            HttpContext.Session.SetString("oldImageUrl", mCat.Image);
+            return View(mCat);
 		}
 
 		// POST: MainCategoriesController/Delete/5
@@ -182,10 +175,16 @@ namespace ECommerceProject.Controllers
 		{
 			try
 			{
-				int resut = service.DeleteMainCategory(id);
+                string oldImageUrl = HttpContext.Session.GetString("oldImageUrl");
+
+                int resut = service.DeleteMainCategory(id);
 				if (resut >= 1)
 				{
-					return RedirectToAction(nameof(Index));
+                    string[] str = oldImageUrl.Split("/");
+                    string str1 = (str[str.Length - 1]);
+                    string path = _iHostEnv.WebRootPath + "\\uploads/category\\" + str1;
+                    System.IO.File.Delete(path);
+                    return RedirectToAction(nameof(Index));
 				}
 				else
 				{

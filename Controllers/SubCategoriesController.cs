@@ -194,6 +194,7 @@ namespace ECommerceProject.Controllers
         public ActionResult Delete(int id)
         {
             var sCat = subCategoryService.GetSubCategoryById(id);
+            HttpContext.Session.SetString("oldImageUrl", sCat.Image);
             return View(sCat);
         }
 
@@ -204,9 +205,15 @@ namespace ECommerceProject.Controllers
         {
             try
             {
+                string oldImageUrl = HttpContext.Session.GetString("oldImageUrl");
+
                 int resut = subCategoryService.DeleteSubCategory(id);
                 if (resut >= 1)
                 {
+                    string[] str = oldImageUrl.Split("/");
+                    string str1 = (str[str.Length - 1]);
+                    string path = _iHostEnv.WebRootPath + "\\uploads/category\\" + str1;
+                    System.IO.File.Delete(path);
                     return RedirectToAction(nameof(Index));
                 }
                 else

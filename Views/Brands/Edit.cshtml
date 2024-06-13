@@ -26,7 +26,7 @@
             @if (!string.IsNullOrEmpty(Model.ImagePath))
             {
                 <div>
-                    <img src="~/uploads/category/@Model.ImagePath" width="100" height="100" />
+                    <img src="@Url.Content(Model.ImagePath)" height="150" width="200" />
                 </div>
             }
             <div class="form-group">

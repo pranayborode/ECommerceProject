@@ -2,7 +2,7 @@
 
 <div class="container mt-5 mb-5">
     <div class="row">
-        @foreach (var product in Model.Take(12)) // Ensure only 12 products are shown (3 rows of 4 products each)
+        @foreach (var product in Model.Take(16)) // Ensure only 12 products are shown (3 rows of 4 products each)
         {
             <div class="col-sm-6 col-md-4 col-lg-3 mb-2">
                 <div class="card h-90">
@@ -18,14 +18,14 @@
                                 {
                                     <span class="text-danger mr-2 large-text">@product.OfferPercentage% Off</span>
                                 }
-                                <span class="text-success large-text">@((int)(product.Price - (product.Price * (decimal)product.OfferPercentage / 100)))</span>
+                                <span class="text-success large-text">@(((int)(product.Price - (product.Price * (decimal)product.OfferPercentage / 100))).ToString("C"))</span>
                             </div>
                         </div>
                         <div class="text-muted d-flex">
-                            <del>$@product.Price</del>
+                            <del>@product.Price.ToString("C")</del>
                         </div>
                         <div class="mt-1">
-                            <a asp-action="QuickView" asp-route-id="@product.ProductId" class="btn btn-primary btn-block">Quick View</a>
+                            <a asp-action="QuickView" asp-route-id="@product.ProductId" class="btn btn-dark btn-block">Quick View</a>
                             
                         </div>
                     </div>

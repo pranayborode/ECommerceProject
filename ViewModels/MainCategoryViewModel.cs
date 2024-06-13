@@ -12,7 +12,7 @@ namespace ECommerceProject.ViewModels
 		public string Subtitle { get; set; }
 
 		
-		public IFormFile Image { get; set; }
+		public IFormFile? Image { get; set; }
 
         public string ImagePath { get; set; }
         public virtual ICollection<SubCategory> SubCategories { get; set; } = new List<SubCategory>();

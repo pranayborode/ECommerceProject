@@ -20,6 +20,7 @@ namespace ECommerceProject.ViewModels
 		public decimal Price { get; set; }
        
 
+
         [Required]
 		public int Stock { get; set; }
 
@@ -28,7 +29,7 @@ namespace ECommerceProject.ViewModels
 
 		
 
-		public IFormFile Image { get; set; }
+		public IFormFile? Image { get; set; }
 		public string ImagePath { get; set; }
 
 		// Offer percentage
@@ -52,5 +53,7 @@ namespace ECommerceProject.ViewModels
 		public List<Brand> Brands { get; set; }
 
 		public virtual ICollection<ProductImage> Images { get; set; }
+
+		
 	}
 }
