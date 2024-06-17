@@ -7,7 +7,7 @@ namespace ECommerceProject.Controllers
     [Authorize(Roles = "Admin")]
     public class RoleController : Controller
 	{
-		RoleManager<IdentityRole> roleManager;
+		 RoleManager<IdentityRole> roleManager;
 		public RoleController(RoleManager<IdentityRole> roleManager)
 		{
 			this.roleManager = roleManager;

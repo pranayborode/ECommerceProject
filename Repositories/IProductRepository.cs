@@ -12,5 +12,7 @@ namespace ECommerceProject.Repositories
         int GetSoldOutProductsCount();
 		public IEnumerable<Product> GetSimilarProducts(int productId);
 
+		
+
 	}
 }

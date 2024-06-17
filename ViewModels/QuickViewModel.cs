@@ -6,5 +6,6 @@ namespace ECommerceProject.ViewModels
 	{
 		public Product Product { get; set; }
 		public IEnumerable<Product> SimilarProducts { get; set; }
+
 	}
 }

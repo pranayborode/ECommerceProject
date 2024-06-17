@@ -1,8 +1,9 @@
 ﻿@model IEnumerable<ECommerceProject.Models.Product>
 
+
 <div class="container mt-5 mb-5">
     <div class="row">
-        @foreach (var product in Model.Take(16)) // Ensure only 12 products are shown (3 rows of 4 products each)
+        @foreach (var product in Model.Take(8)) // Ensure only 12 products are shown (3 rows of 4 products each)
         {
             <div class="col-sm-6 col-md-4 col-lg-3 mb-2">
                 <div class="card h-90">

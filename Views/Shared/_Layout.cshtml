@@ -44,10 +44,10 @@
 		<div class="row">
 			<div class="col">
 				<header>
-					<nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow">
-						<div class="container-fluid">
+					<nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-dark bg-dark border-bottom box-shadow">
+						<div class="container-fluid ml-2 mr-2">
 							<a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">
-								<img src="~/images/icons/logo-01.png" alt="IMG-LOGO">
+								<img src="~/images/icons/logo-02.png" alt="IMG-LOGO">
 							</a>
 
 							<button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
@@ -63,13 +63,13 @@
 										</li>
 									}
 									<li class="nav-item">
-										<a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
+										<a class="nav-link " asp-area="" asp-controller="Home" asp-action="Index">Home</a>
 									</li>
 									<li class="nav-item">
-										<a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+										<a class="nav-link " asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
 									</li>
 								</ul>
-								<div class="position-relative">
+								<div class="position-relative mr-2">
 									<a class="nav-link" asp-area="" asp-controller="Cart" asp-action="Index">
 										<i class="fas fa-shopping-cart"></i>
 										<span id="cartItemCount" class="position-absolute top-10 start-96 translate-middle badge rounded-pill bg-danger">@ViewBag.TotalQuantity</span>
@@ -330,6 +330,14 @@
 	<script src="~/AdminLTE/dist/js/demo.js"></script>
 	<!-- AdminLTE dashboard demo (This is only for demo purposes) -->
 	<script src="~/AdminLTE/dist/js/pages/dashboard.js"></script>
+
+
+	<!-- Theme Config Js -->
+	<script src="~/js/hyper-config.js"></script>
+
+	<!-- App css -->
+	<link href="~/css/app-saas.min.css" rel="stylesheet" type="text/css" id="app-style">
+
 
 
 	<!-- Page specific script -->

@@ -1,0 +1,30 @@
+﻿@{
+    ViewBag.Title = "Error";
+}
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Error</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" />
+</head>
+<body>
+    <div class="container">
+        <div class="jumbotron text-center">
+            <h1 class="display-4">Oops! Something went wrong.</h1>
+            <p class="lead">We encountered an issue while processing your request.</p>
+            <hr class="my-4">
+            <p>Please try again or contact our support team if the issue persists.</p>
+
+            @if (ViewBag.ErrorMessage != null)
+            {
+                <div class="alert alert-danger" role="alert">
+                    <strong>Error Details:</strong> @ViewBag.ErrorMessage
+                </div>
+            }
+
+            <a href="/Order/Checkout" class="btn btn-primary">Go Back to Checkout</a>
+        </div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,17 @@
+﻿@model ECommerceProject.Models.Address
+
+@if (Model != null)
+{
+    <div>
+        <h4>Selected Address</h4>
+        <p>
+            @Model.Apartment, @Model.Street, @Model.Landmark<br />
+            @Model.City, @Model.State, @Model.Pincode<br />
+            @Model.Country
+        </p>
+    </div>
+}
+else
+{
+    <p>No address selected.</p>
+}

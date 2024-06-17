@@ -1,0 +1,42 @@
+﻿@model ECommerceProject.ViewModels.CheckoutViewModel
+
+<h2>Checkout</h2>
+
+<div>
+    <h3>Select Delivery Address</h3>
+    <form asp-action="SelectAddress" method="post">
+        @foreach (var address in Model.Addresses)
+        {
+            <div>
+                <input type="radio" name="SelectedAddressId" value="@address.AddressId" />
+                @address.FullAddress
+            </div>
+        }
+        <button type="submit">Select This Address</button>
+    </form>
+</div>
+
+<div id="selectedAddress">
+    @Html.Partial("_SelectedAddress", Model.SelectedAddress)
+</div>
+
+<div>
+    <h3>Order Summary</h3>
+    <ul>
+        @foreach (var item in Model.CartItems)
+        {
+            <li>@item.Product.Name - Quantity: @item.Quantity - Price: @item.DiscountedPrice</li>
+        }
+    </ul>
+    <p>Total Amount: @Model.TotalAmount</p>
+</div>
+
+<div>
+    <h3>Payment Method</h3>
+    <form asp-action="PlaceOrder" method="post">
+        <input type="hidden" name="SelectedAddressId" value="@Model.SelectedAddressId" />
+        <input type="radio" name="SelectedPaymentMethod" value="Razorpay" /> Razorpay
+        <input type="radio" name="SelectedPaymentMethod" value="COD" /> Cash on Delivery
+        <button type="submit">Confirm Order</button>
+    </form>
+</div>

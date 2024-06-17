@@ -1,0 +1,66 @@
+﻿@model ECommerceProject.Models.Order
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Order Success</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" />
+</head>
+<body>
+    <div class="container mt-4">
+        <div class="jumbotron text-center">
+            <h1 class="display-4">Order Placed Successfully!</h1>
+            <p class="lead">Thank you for your purchase. Your order details are below.</p>
+            <hr class="my-4">
+
+            <h2>Order Summary</h2>
+            <table class="table table-bordered">
+                <thead>
+                    <tr>
+                        <th>Product Name</th>
+                        <th>Quantity</th>
+                        <th>Price</th>
+                        <th>Total</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (Model.OrderItems != null && Model.OrderItems.Any())
+                    {
+                        foreach (var item in Model.OrderItems)
+                        {
+                            <tr>
+                                <td>@item.Product.Name</td>
+                                <td>@item.Size</td>
+                                <td>@item.Quantity</td>
+                                <td>@item.Price.ToString("C")</td>
+                                <td>@(item.Price * item.Quantity).ToString("C")</td>
+                            </tr>
+                        }
+                    }
+                    else
+                    {
+                        <tr>
+                            <td colspan="4">No items in this order.</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+
+            <h2>Shipping Address</h2>
+            <p>@Model.Address.FullName</p>
+            <p>@Model.Address.Street</p>
+            <p>@Model.Address.City, @Model.Address.State, @Model.Address.Pincode</p>
+            <p>@Model.Address.Country</p>
+
+            <h2>Order Details</h2>
+            <p><strong>Order ID:</strong> @Model.OrderId</p>
+            <p><strong>Order Date:</strong> @Model.OrderDate.ToString("MMMM dd, yyyy")</p>
+            <p><strong>Total Amount:</strong> @Model.TotalAmount.ToString("C")</p>
+            <p><strong>Payment Method:</strong> @Model.PaymentMethod</p>
+            <p><strong>Order Status:</strong> @Model.OrderStatus</p>
+
+            <a href="/" class="btn btn-primary">Continue Shopping</a>
+        </div>
+    </div>
+</body>
+</html>

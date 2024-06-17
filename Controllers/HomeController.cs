@@ -1,4 +1,5 @@
 ﻿using ECommerceProject.Data;
+using ECommerceProject.Enum;
 using ECommerceProject.Models;
 using ECommerceProject.Services;
 using ECommerceProject.ViewModels;
@@ -17,18 +18,20 @@ namespace ECommerceProject.Controllers
         private readonly UserManager<IdentityUser> _userManager;
 		private readonly ApplicationDbContext _context;
 		private readonly IProductService _productService;
-	
+		private readonly IOrderService _orderService;
 
 		public HomeController(
 			ILogger<HomeController> logger,
             UserManager<IdentityUser> userManager,
 			ApplicationDbContext context,
-            IProductService productService)
+            IProductService productService,
+			IOrderService orderService)
 		{
 			_logger = logger;
 			_userManager = userManager;
 			_context = context;
 			_productService = productService;
+			_orderService = orderService;
 		}
         [AllowAnonymous]
         public IActionResult Index()
@@ -78,9 +81,13 @@ namespace ECommerceProject.Controllers
             var userCount = await _userManager.Users.CountAsync();
 			var productCount = await _context.Products.CountAsync();
             var soldOutCount = _productService.GetSoldOutProductsCount();
-            ViewBag.UserCount = userCount;
+			var newOrders = _orderService.GetPendingOrderCount();
+				
+
+			ViewBag.UserCount = userCount;
 			ViewBag.ProductCount = productCount;
 			ViewBag.SoldOutCount = soldOutCount;
+			ViewBag.NewOrders = newOrders;
 			return View();
 		}
 		public IActionResult Privacy()

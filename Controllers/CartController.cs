@@ -42,7 +42,7 @@ namespace ECommerceProject.Controllers
 				var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
 				var product = _productService.GetProductById(productId);
 
-				var cartItem = new CartItem
+                var cartItem = new CartItem
 				{
 					UserId = userId,
 					ProductId = productId,
