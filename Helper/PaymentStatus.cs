@@ -1,4 +1,6 @@
-﻿namespace ECommerceProject.Enum
+﻿using System;
+
+namespace ECommerceProject.Helper
 {
     public enum PaymentStatus
     {
@@ -6,4 +8,5 @@
         Paid,
         Failed
     }
+
 }

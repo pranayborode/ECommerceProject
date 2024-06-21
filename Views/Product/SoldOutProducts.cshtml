@@ -1,0 +1,105 @@
+﻿@model IEnumerable<ECommerceProject.Models.Product>
+
+@{
+	ViewData["Title"] = "Index";
+}
+
+<div class="card mt-3">
+	<div class="card-header">
+		<h3 class="card-title">SoldOut Product's List</h3>
+	</div>
+	<!-- /.card-header -->
+	<div class="card-body">
+		<table id="example2" class="table table-bordered table-striped">
+			<thead>
+				<tr>
+					<th>
+						@Html.DisplayNameFor(model => model.Name)
+					</th>
+					@*  <th>
+					@Html.DisplayNameFor(model => model.Description)
+					</th> *@
+					<th>
+						@Html.DisplayNameFor(model => model.Price)
+					</th>
+					<th>
+						@Html.DisplayNameFor(model => model.Stock)
+					</th>
+					<th>
+						@* @Html.DisplayNameFor(model => model.OfferPercentage) *@
+						Offer
+					</th>
+					<th>
+						@Html.DisplayNameFor(model => model.IsAvailable)
+					</th>
+
+					<th>
+						@Html.DisplayNameFor(model => model.Image)
+					</th>
+
+					<th>
+						@Html.DisplayNameFor(model => model.MainCategory)
+					</th>
+					<th>
+						@Html.DisplayNameFor(model => model.SubCategory)
+					</th>
+					<th>
+						@Html.DisplayNameFor(model => model.Brand)
+					</th>
+					<th>Action</th>
+				</tr>
+			</thead>
+			<tbody>
+				@foreach (var item in Model.Where(p => p.IsAvailable == false))
+				{
+					<tr>
+						<td>
+							@Html.DisplayFor(modelItem => item.Name)
+						</td>
+						@* <td>
+					@Html.DisplayFor(modelItem => item.Description)
+					</td> *@
+						<td>
+							@Html.DisplayFor(modelItem => item.Price)
+						</td>
+						<td>
+							@Html.DisplayFor(modelItem => item.Stock)
+						</td>
+						<td>
+							@Html.DisplayFor(modelItem => item.OfferPercentage)%
+						</td>
+						<td>
+							<span class="@(item.IsAvailable ? "available" : "soldout")">
+								@(item.IsAvailable ? "Available" : "SoldOut")
+							</span>
+							@* @Html.DisplayFor(modelItem => item.IsAvailable) *@
+						</td>
+
+						@* <td>
+					@Html.DisplayFor(modelItem => item.Image)
+					</td> *@
+						<td>
+							<img src="@Url.Content(item.Image)" style="width:auto; height:70px;" />
+						</td>
+
+						<td>
+							@Html.DisplayFor(modelItem => item.MainCategory.Name)
+						</td>
+						<td>
+							@Html.DisplayFor(modelItem => item.SubCategory.Name)
+						</td>
+						<td>
+							@(item.Brand?.Name ?? "No Brand")
+						</td>
+
+						<td>
+							<a asp-action="Edit" asp-route-id="@item.ProductId"><i class="fa fa-edit"></i></a><br>
+							<a asp-action="Details" asp-route-id="@item.ProductId"><i class="fa fa-eye"></i></a><br>
+							<a asp-action="Delete" asp-route-id="@item.ProductId"><i class="fa fa-trash"></i></a>
+						</td>
+					</tr>
+				}
+			</tbody>
+		</table>
+	</div>
+</div>

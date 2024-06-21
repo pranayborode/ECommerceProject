@@ -85,23 +85,56 @@ namespace ECommerceProject.Repositories
 				.ToList();
 		}
 
-		// To GET Similar Products by SubCategory in QuickView 
-		public IEnumerable<Product> GetSimilarProducts(int productId)
-		{
-			var product = _context.Products.Find(productId);
-			if (product != null)
-			{
-                return _context.Products
-           .Where(p => p.SubCategoryId == product.SubCategoryId && p.ProductId != productId)
-           .ToList();
+        // To GET Similar Products by SubCategory in QuickView 
+        public IEnumerable<Product> GetSimilarProducts(int productId)
+        {
+            var product = _context.Products.Find(productId);
+
+            if (product != null)
+            {
+                var subcategoryProducts = _context.Products
+                    .Where(p => p.SubCategoryId == product.SubCategoryId && p.ProductId != productId)
+                    .ToList();
+
+                if (subcategoryProducts.Count < 4)
+                {
+					var mainCategoryProducts = _context.Products
+                        .Where(p => p.MainCategoryId == product.MainCategoryId && p.ProductId != productId)
+                        .Take(4 - subcategoryProducts.Count) 
+                        .ToList();
+
+                   
+                    return subcategoryProducts.Concat(mainCategoryProducts);
+                }
+                else
+                {
+                    
+                    return subcategoryProducts;
+                }
             }
-            return new List<Product>();
+
+            return new List<Product>(); // Return an empty list if the product is not found
         }
 
-		// To Display SoldOut Products Count in Dashboard 
-		public int GetSoldOutProductsCount()
+
+
+        // To Display SoldOut Products Count in Dashboard 
+        public int GetSoldOutProductsCount()
         {
             return _context.Products.Count(p => !p.IsAvailable);
         }
     }
 }
+
+/*
+public IEnumerable<Product> GetSimilarProducts(int productId)
+{
+    var product = _context.Products.Find(productId);
+    if (product != null)
+    {
+        return _context.Products
+        .Where(p => p.SubCategoryId == product.SubCategoryId && p.ProductId != productId)
+        .ToList();
+    }
+    return new List<Product>();
+}*/

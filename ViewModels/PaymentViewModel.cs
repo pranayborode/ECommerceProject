@@ -20,5 +20,7 @@ namespace ECommerceProject.ViewModels
 
         public string PaymentMethod { get; set; }
 
-    }
+		public string ReceiptId { get; set; }
+
+	}
 }

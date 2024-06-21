@@ -1,5 +1,5 @@
 ﻿using ECommerceProject.Data;
-using ECommerceProject.Enum;
+using ECommerceProject.Helper;
 using ECommerceProject.Models;
 using ECommerceProject.Services;
 using ECommerceProject.ViewModels;
@@ -11,7 +11,6 @@ using System.Diagnostics;
 
 namespace ECommerceProject.Controllers
 {
-    
     public class HomeController : Controller
 	{
 		private readonly ILogger<HomeController> _logger;
@@ -63,7 +62,8 @@ namespace ECommerceProject.Controllers
 			{
 				Product = product,
 				SimilarProducts = similarProducts
-			};
+				
+            };
 			return View(viewModel);
         }
 
@@ -72,7 +72,6 @@ namespace ECommerceProject.Controllers
 			var model = _productService.GetSimilarProducts(id);
 			return PartialView("_SimilarProducts", model);
 		}
-
 
 
 		[Authorize(Roles = "Admin")]

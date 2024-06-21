@@ -4,45 +4,42 @@
 	ViewData["Title"] = "Shopping Cart";
 }
 @{
-	ViewData["Title"] = "Shopping Cart";
 	decimal subtotal = 0;
+	decimal grandTotal = 0;
+	decimal discountTotal = 0;
 	decimal amountForFreeDelivery = 0;
 	int progressPercentage = 0;
 	string formattedFreeDeliveryThreshold = "";
 	string formattedAmountForFreeDelivery = "";
-	
+
 	if (Model != null && Model.CartItems != null && Model.CartItems.Any())
 	{
 		const decimal FreeDeliveryThreshold = 499;
 		subtotal = Model.CartItems.Sum(item => item.Quantity * item.DiscountedPrice);
+		grandTotal = Model.CartItems.Sum(item => item.Quantity * item.Price);
+		discountTotal = grandTotal - subtotal;
 		amountForFreeDelivery = FreeDeliveryThreshold - subtotal;
 		progressPercentage = (int)((subtotal / FreeDeliveryThreshold) * 100);
 
 		formattedFreeDeliveryThreshold = ((int)FreeDeliveryThreshold).ToString("C0");
 		formattedAmountForFreeDelivery = ((int)amountForFreeDelivery).ToString("C0");
-
 	}
 }
 
 
 <div class="content-page">
 	<div class="content">
-
 		<!-- Start Content-->
 		<div class="container-fluid">
-
 			<!-- start page title -->
 			<div class="row">
 				<div class="col-12">
 					<div class="page-title-box">
-						@* <h4 class="page-title">Shopping Cart</h4> *@
 						<h3 class="mt-4">@ViewData["Title"]</h3>
-
 					</div>
 				</div>
 			</div>
 			<!-- end page title -->
-
 			<div class="row">
 				<div class="col-12">
 					<div class="card">
@@ -78,7 +75,6 @@
 																{
 																	<small class="text-danger fw-bold ms-2">Sold Out</small>
 																}
-																
 															</p>
 														</td>
 														<td>
@@ -86,8 +82,7 @@
 														</td>
 														<td>
 															@* <input type="number" min="1" value="5" class="form-control" placeholder="Qty" style="width: 90px;"> *@
-															<input type="number" class="quantity" value="@item.Quantity" min="1" onchange="updateQuantity(@item.CartItemId, this.value)" />
-
+															<input type="number" class="quantity" value="@item.Quantity" min="1" max="@item.Product.Stock" onchange="delayedUpdateQuantity(@item.CartItemId, this.value)" />
 														</td>
 														<td>
 															@(((item.DiscountedPrice) * (item.Quantity)).ToString("C"))
@@ -99,14 +94,12 @@
 																	<i class="fa fa-trash text-danger" aria-hidden="true"></i>
 																</a>
 															</form>
-						
 														</td>
 													</tr>
 												}
 											</tbody>
 										</table>
 									</div> <!-- end table-responsive-->
-									
 									<!-- action buttons-->
 									<div class="row m-2">
 										<div class="col-sm-6">
@@ -114,7 +107,6 @@
 												<i class="fa fa-arrow-left" aria-hidden="true"></i> Continue Shopping
 											</a>
 										</div> <!-- end col -->
-										
 										<div class="col-sm-6">
 											<div class="text-sm-end">
 												<form asp-action="ClearCart" method="post">
@@ -122,15 +114,11 @@
 														<i class="fa fa-trash-o text-white" aria-hidden="true"></i> Clear Cart
 													</button>
 												</form>
-												@* <a href="apps-ecommerce-checkout.html" class="btn btn-danger">
-													<i class="mdi mdi-cart-plus me-1"></i> Checkout
-												</a> *@
 											</div>
 										</div> <!-- end col -->
 									</div> <!-- end row-->
 								</div>
 								<!-- end col -->
-
 								<div class="col-lg-4">
 									<div class="summary mb-2">
 										<div class="progress-container">
@@ -161,56 +149,56 @@
 									</div>
 									<div class="border p-3 mt-4 mt-lg-0 rounded">
 										<h4 class="header-title mb-3">Order Summary</h4>
-
 										<div class="table-responsive">
 											<table class="table mb-0">
 												<tbody>
 													<tr>
 														<td>Grand Total :</td>
-														<td>$1571.19</td>
+														<td>@grandTotal.ToString("C")</td>
 													</tr>
 													<tr>
 														<td>Discount : </td>
-														<td>-$157.11</td>
+														<td>- @discountTotal.ToString("C")</td>
 													</tr>
 													<tr>
 														<td>Shipping Charge :</td>
-														<td>$25</td>
+														@if (subtotal < 499)
+														{
+															<td>40</td>
+														}
+														else
+														{
+															<td>Free</td>
+														}
 													</tr>
 													<tr>
-														<td>Estimated Tax : </td>
-														<td>$19.22</td>
+														<td>Promotion Applied: </td>
+														<td></td>
 													</tr>
 													<tr>
 														<th>Total :</th>
-														<th>$1458.3</th>
+														<th>@subtotal.ToString("C")</th>
 													</tr>
 												</tbody>
 											</table>
 										</div>
 										<!-- end table-responsive -->
 									</div>
-
 									<div class="alert alert-warning mt-3" role="alert">
 										Use coupon code <strong>HYPBM</strong> and get 10% discount !
 									</div>
-
 									<div class="input-group mt-3">
 										<input type="text" class="form-control" placeholder="Coupon code" aria-label="Recipient's username">
 										<button class="input-group-text btn-light" type="button">Apply</button>
 									</div>
-
 								</div> <!-- end col -->
-
 							</div> <!-- end row -->
 						</div> <!-- end card-body-->
 					</div> <!-- end card-->
 				</div> <!-- end col -->
 			</div>
 			<!-- end row -->
-
 		</div> <!-- container -->
-
 	</div> <!-- content -->
 </div>
 <style>
@@ -337,6 +325,18 @@
 	}
 </style>
 <script>
+	var delayTimer;
+
+	function delayedUpdateQuantity(cartItemId, quantity) {
+		// Clear any existing timeout
+		clearTimeout(delayTimer);
+
+		// Set a new timeout for 2 seconds
+		delayTimer = setTimeout(function () {
+			updateQuantity(cartItemId, quantity);
+		}, 1500); // 2000 milliseconds = 2 seconds
+	}
+
 	function updateQuantity(cartItemId, quantity) {
 		$.ajax({
 			url: '@Url.Action("UpdateQuantity", "Cart")',
@@ -355,5 +355,4 @@
 		});
 	}
 </script>
-
 

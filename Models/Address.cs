@@ -47,7 +47,12 @@ namespace ECommerceProject.Models
         public string Country { get; set; }
 
 		[NotMapped]
-		public string FullAddress => $"{FullName},{Apartment},{Street},{Landmark}, {City}, {State}, {Pincode}, {Country}";
+		public string FullAddress => $"{FullName}, {Apartment}, {Street}, {Landmark}, {City}, {State}, {Pincode}, {Country}";
+
+		[NotMapped]
+		public string FullAddressWTOname => $"{Apartment}, {Street}, {Landmark}, {City}, {State}, {Pincode}, {Country}";
+
+
 
 	}
 }

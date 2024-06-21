@@ -1,0 +1,500 @@
+﻿@model ECommerceProject.ViewModels.OrderEditViewModel
+@using ECommerceProject.Helper
+@{
+	ViewData["Title"] = "Update Order";
+}
+@{
+	decimal subtotal = 0;
+	decimal grandTotal = 0;
+	decimal discountTotal = 0;
+	decimal amountForFreeDelivery = 0;
+	int progressPercentage = 0;
+	string formattedFreeDeliveryThreshold = "";
+	string formattedAmountForFreeDelivery = "";
+	if (Model != null && Model.OrderItems != null && Model.OrderItems.Any())
+	{
+		const decimal FreeDeliveryThreshold = 499;
+		subtotal = Model.OrderItems.Sum(item => item.Quantity * item.DiscountedPrice);
+		grandTotal = Model.OrderItems.Sum(item => item.Quantity * item.Price);
+		discountTotal = grandTotal - subtotal;
+		amountForFreeDelivery = FreeDeliveryThreshold - subtotal;
+		progressPercentage = (int)((subtotal / FreeDeliveryThreshold) * 100);
+		formattedFreeDeliveryThreshold = ((int)FreeDeliveryThreshold).ToString("C0");
+		formattedAmountForFreeDelivery = ((int)amountForFreeDelivery).ToString("C0");
+	}
+}
+
+<h3 class="pt-2">Update Order</h3>
+
+<hr />
+
+<div>
+	<a asp-action="OrdersList">Back to List</a>
+</div>
+
+<!-- Start Content-->
+<div class="container-fluid">
+	<div class="row">
+		<div class="col-12">
+			<div class="row justify-content-center">
+				<div class="col-lg-7 col-md-10 col-sm-11">
+					<div class="horizontal-steps mt-3 mb-2 pb-5" id="">
+						<div class="horizontal-steps-content">
+							<div class="step-item @(Model.Order.OrderStatus == ECommerceProject.Helper.OrderStatus.Pending? "current" : (Model.Order.OrderStatus >ECommerceProject.Helper.OrderStatus.Pending ? "completed" : ""))">
+								<span data-bs-container="#tooltip-container" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-original-title="Order Placed Date">@OrderStatus.Pending</span>
+							</div>
+							<div class="step-item @(Model.Order.OrderStatus == ECommerceProject.Helper.OrderStatus.Confirmed? "current" : (Model.Order.OrderStatus >ECommerceProject.Helper.OrderStatus.Confirmed ? "completed" : ""))">
+								<span data-bs-container="#tooltip-container" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-original-title="Order Placed Date">@OrderStatus.Confirmed</span>
+							</div>
+							<div class="step-item @(Model.Order.OrderStatus == ECommerceProject.Helper.OrderStatus.Packed ? "current" : (Model.Order.OrderStatus > ECommerceProject.Helper.OrderStatus.Packed ? "completed" : ""))">
+								<span data-bs-container="#tooltip-container" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-original-title="Packed Date">@OrderStatus.Packed</span>
+							</div>
+							<div class="step-item @(Model.Order.OrderStatus == ECommerceProject.Helper.OrderStatus.Shipped ? "current" : (Model.Order.OrderStatus > ECommerceProject.Helper.OrderStatus.Shipped ? "completed" : ""))">
+								<span data-bs-container="#tooltip-container" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-original-title="Shipped Date">@OrderStatus.Shipped</span>
+							</div>
+							<div class="step-item @(Model.Order.OrderStatus == ECommerceProject.Helper.OrderStatus.Delivered ? "current" : (Model.Order.OrderStatus > ECommerceProject.Helper.OrderStatus.Delivered ? "completed" : ""))">
+								<span data-bs-container="#tooltip-container" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-original-title="Delivered Date">@OrderStatus.Delivered</span>
+							</div>
+						</div>
+						@{
+							int totalSteps = (Enum.GetValues(typeof(ECommerceProject.Helper.OrderStatus)).Length) - 3;
+
+							int completedSteps = (int)Model.Order.OrderStatus;
+
+							double progressWidth = ((double)(completedSteps) / (totalSteps)) * 100;
+						}
+						<div class="process-line" style="width: @progressWidth%;"></div>
+					</div>
+				</div>
+			</div>
+
+			<div class="row">
+				<div class="col-lg-12">
+					<div class="card">
+						<div class="card-body">
+							<h5>ITEMS FROM ORDER #@Model.Order.OrderId</h5>
+							<div class="table-responsive">
+								<table class="table table-borderless table-nowrap table-centered mb-0">
+									<thead class="table-light">
+										<tr>
+											<th>Product</th>
+											<th>Price</th>
+											<th>Qty</th>
+											<th>Total</th>
+										</tr>
+									</thead>
+									<tbody>
+										@foreach (var item in Model.OrderItems)
+										{
+											<tr>
+												<td>
+													<img src="@Url.Content(item.Product.Image)" alt="ProductImg" title="contact-img" class="rounded me-1 ml-0" height="64">
+													<p class="m-0 d-inline-block align-middle font-16">
+														<a asp-action="QuickView" asp-controller="Home" asp-route-id="@item.Product.ProductId" class="text-body">@item.Product.Name</a>
+														<br>
+														<small class="me-2"><b>Size:</b>@item.Size </small>
+													</p>
+												</td>
+												<td>
+													@item.DiscountedPrice.ToString("C")
+												</td>
+												<td>
+													@item.Quantity
+												</td>
+												<td>
+													@(((item.DiscountedPrice) * (item.Quantity)).ToString("C"))
+												</td>
+											</tr>
+										}
+									</tbody>
+								</table>
+							</div> <!-- end table-responsive-->
+						</div>
+					</div>
+				</div><!-- end col -->
+			</div> <!-- end row -->
+
+			<div class="row">
+				<div class="col-lg-12">
+					<div class="card">
+						<div class="card-body">
+							<form asp-action="Edit">
+								<div asp-validation-summary="ModelOnly" class="text-danger"></div>
+								<input type="hidden" asp-for="Order.OrderId" />
+								<input type="hidden" asp-for="Order.AddressId" class="form-control" readonly />
+								<input type="hidden" asp-for="Order.TotalAmount" class="form-control" readonly />
+								<input type="hidden" asp-for="Order.ReceiptId" class="form-control" readonly />
+								<input type="hidden" asp-for="Order.PaymentMethod" class="form-control" readonly />
+								<input type="hidden" asp-for="Order.RazorpayPaymentId" class="form-control" readonly />
+								<input type="hidden" asp-for="Order.RazorpayOrderId" class="form-control" readonly />
+								<input type="hidden" asp-for="Order.RazorpaySignature" class="form-control" readonly />
+								<input type="hidden" asp-for="Order.OrderItems" class="form-control" readonly />
+								<input type="hidden" asp-for="Order.UserId" class="form-control" readonly />
+								<div class="row">
+									<div class="col-lg-4">
+										<div class="form-group">
+											<label asp-for="Order.OrderDate" class="control-label"></label>
+											<input asp-for="Order.OrderDate" class="form-control" readonly />
+											<span asp-validation-for="Order.OrderDate" class="text-danger"></span>
+										</div>
+										<div class="form-group">
+											<label asp-for="Order.UpdatedDate" class="control-label"></label>
+											<input asp-for="Order.UpdatedDate" class="form-control" readonly />
+											<span asp-validation-for="Order.UpdatedDate" class="text-danger"></span>
+										</div>
+										<div class="form-group">
+											<input type="submit" value="Update Order" class="btn btn-primary btn-sm" />
+										</div>
+									</div><!-- end col-lg-4 -->
+									<div class="col-lg-4">
+										<div class="form-group">
+											<label asp-for="Order.PaymentStatus" class="control-label"></label>
+											<select asp-for="Order.PaymentStatus" class="form-control" asp-items="@(new SelectList(Model.PaymentStatuses))"></select>
+											<span asp-validation-for="Order.PaymentStatus" class="text-danger"></span>
+										</div>
+										<div class="form-group">
+											<label asp-for="Order.OrderStatus" class="control-label"></label>
+											<select asp-for="Order.OrderStatus" class="form-control" asp-items="@(new SelectList(Model.OrderStatuses))"></select>
+											<span asp-validation-for="Order.OrderStatus" class="text-danger"></span>
+										</div>
+									</div><!-- end col-lg-4 -->
+									<div class="col-lg-4">
+									</div><!-- end col-lg-4 -->
+								</div>
+							</form>
+						</div>
+					</div>
+				</div> <!-- end row -->
+				<div class="row equal-height-cards">
+					<div class="col-lg-4">
+						<div class="card">
+							<div class="card-body">
+								<h5>SHIPPING INFORMATION</h5>
+								<ul class="list-unstyled  gap-1 fs-13 mb-0">
+									<li class="fw-normal fs-5 mb-1">@Model.Order.Address.FullName</li>
+									<li>@Model.Order.Address.MobileNumber</li>
+									<li>@Model.Order.Address.FullAddressWTOname</li>
+								</ul>
+							</div>
+						</div>
+					</div>
+					<div class="col-lg-4">
+						<div class="card">
+							<div class="card-body">
+								<h5>BILLING INFORMATION</h5>
+								<div class="d-flex align-items-center mb-0">
+									<div class="flex-shrink-0">
+										<p class="text-muted mb-0">Transactions:</p>
+									</div>
+									<div class="flex-grow-1 ms-2">
+										<h6 class="mb-2">#@Model.Order.RazorpayPaymentId</h6>
+									</div>
+								</div>
+								<div class="d-flex align-items-center mb-0">
+									<div class="flex-shrink-0">
+										<p class="text-muted mb-0">Receipt Id:</p>
+									</div>
+									<div class="flex-grow-1 ms-2">
+										<h6 class="mb-2">#@Model.Order.ReceiptId</h6>
+									</div>
+								</div>
+								<div class="d-flex align-items-center mb-0">
+									<div class="flex-shrink-0">
+										<p class="text-muted mb-0">Payment Method:</p>
+									</div>
+									<div class="flex-grow-1 ms-2">
+										<h6 class="mb-2">@Model.Order.PaymentMethod</h6>
+									</div>
+								</div>
+								<div class="d-flex align-items-center mb-0">
+									<div class="flex-shrink-0">
+										<p class="text-muted mb-0">Customer Name:</p>
+									</div>
+									<div class="flex-grow-1 ms-2">
+										<h6 class="mb-2">@Model.Order.Address.FullName</h6>
+									</div>
+								</div>
+								<div class="d-flex align-items-center mb-0">
+									<div class="flex-shrink-0">
+										<p class="text-muted mb-0">Payment Status:</p>
+									</div>
+									<div class="flex-grow-1 ms-2">
+										@if (Model.Order.PaymentStatus == ECommerceProject.Helper.PaymentStatus.Paid)
+										{
+											<h6 class="mb-2 badge bg-success-subtle text-success text-uppercase">@Model.Order.PaymentStatus</h6>
+										}
+										else if (Model.Order.PaymentStatus == ECommerceProject.Helper.PaymentStatus.Pending)
+										{
+											<h6 class="mb-2 badge bg-primary-subtle text-primary text-uppercase">@Model.Order.PaymentStatus</h6>
+										}
+										else
+										{
+											<h6 class="mb-2 badge bg-danger-subtle text-danger text-uppercase">@Model.Order.PaymentStatus</h6>
+										}
+
+									</div>
+								</div>
+								<div class="d-flex align-items-center mb-0">
+									<div class="flex-shrink-0">
+										<p class="text-muted mb-0">Date:</p>
+									</div>
+									<div class="flex-grow-1 ms-2">
+										<h6 class="mb-2">@Model.Order.OrderDate</h6>
+									</div>
+								</div>
+								<div class="d-flex align-items-center">
+									<div class="flex-shrink-0">
+										<p class="text-muted mb-0">Total Amount:</p>
+									</div>
+									<div class="flex-grow-1 ms-2">
+										<h6 class="mb-2">@subtotal.ToString("C")</h6>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+					<div class="col-lg-4">
+						<div class="card">
+							<div class="card-body">
+								<h5>ORDER SUMMARY</h5>
+								<div class="mt-4 mt-lg-0 font-13">
+									<div class="table-responsive">
+										<table class="table table-borderless table-nowrap table-centered mb-0">
+											<thead class="table-light">
+												<tr>
+													<th>Description</th>
+													<th>Price</th>
+												</tr>
+											</thead>
+											<tbody>
+												<tr>
+													<td>Grand Total:</td>
+													<td>@grandTotal.ToString("C")</td>
+												</tr>
+												<tr>
+													<td>Discount: </td>
+													<td>- @discountTotal.ToString("C")</td>
+												</tr>
+												<tr>
+													<td>Shipping Charge:</td>
+													@if (subtotal < 499)
+													{
+														<td>40</td>
+													}
+													else
+													{
+														<td>Free</td>
+													}
+												</tr>
+												<tr>
+													<td>Promotion Applied: </td>
+													<td></td>
+												</tr>
+												<tr>
+													<th>Total :</th>
+													<th>@subtotal.ToString("C")</th>
+												</tr>
+											</tbody>
+										</table>
+									</div>
+									<!-- end table-responsive -->
+								</div>
+							</div>
+						</div>
+					</div> <!-- end col -->
+				</div>
+			</div> <!-- end card-body-->
+		</div> <!-- end card-->
+	</div> <!-- end col -->
+</div>
+<!-- end row -->
+</div> <!-- container -->
+
+<style>
+	.summary {
+		flex: 0 0 300px;
+		padding: 20px;
+		border: 1px solid #ddd;
+		border-radius: 5px;
+	}
+
+	p {
+		margin: 0 0 0.1rem 0;
+	}
+
+	.price {
+		font-size: 18px;
+		font-weight: bold;
+	}
+
+	.discount-percentage {
+		color: green;
+	}
+
+	.quantity {
+		width: 60px;
+		text-align: center;
+	}
+
+	.subtotal {
+		margin-top: 20px;
+		text-align: left;
+	}
+
+	.subtotal-title {
+		font-size: 16px;
+	}
+
+	.subtotal-title {
+		font-size: 16px;
+	}
+
+	.subtotal-amount {
+		font-size: 16px;
+		font-weight: bold;
+	}
+
+	.proceed-button {
+		text-align: center;
+		margin-top: 20px;
+	}
+
+		.proceed-button input {
+			background-color: #f0c14b;
+			border: 1px solid #a88734;
+			padding: 8px 8px;
+			font-size: 16px;
+			cursor: pointer;
+		}
+
+	.a-icon-text-separator, .a-text-separator {
+		display: inline-block;
+		width: 1.5px;
+		background-color: #d4d4d4;
+		line-height: 0;
+		height: 14px;
+		vertical-align: middle;
+	}
+
+	.a-size-small {
+		font-size: 14px !important;
+		line-height: 16px !important;
+	}
+
+	.product-size-text {
+		font-size: 14px !important;
+		margin-top: 0;
+		margin-bottom: 0.2rem;
+	}
+
+	media (max-width: 768px) {
+		.shopping-cart
+
+	{
+		flex-direction: column;
+	}
+
+	.summary {
+		order: -1;
+		flex: 0 0 auto;
+	}
+
+	}
+
+	.free-delivery-info {
+		margin-bottom: 20px;
+	}
+
+	.progress-container {
+		display: flex;
+		align-items: center;
+	}
+
+	.progress {
+		background-color: #c1c1c1;
+		border-radius: 5px;
+		overflow: hidden;
+		height: 12px;
+		margin-top: 10px;
+		margin-bottom: 10px;
+		width: 80%;
+	}
+
+	.progress-bar {
+		background-color: #28a745;
+		height: 100%;
+		width: 0;
+		transition: width 0.6s ease;
+	}
+
+	.progress-threshold {
+		margin-left: 10px;
+		font-weight: bold;
+		color: #000;
+	}
+
+
+	/* //------------ */
+	.equal-height-cards {
+		display: flex;
+		flex-wrap: wrap;
+	}
+
+		.equal-height-cards > .col-lg-4 {
+			display: flex;
+			flex-direction: column;
+		}
+
+		.equal-height-cards .card {
+			flex: 1;
+			display: flex;
+			flex-direction: column;
+		}
+
+		.equal-height-cards .card-body {
+			flex: 1;
+		}
+</style>
+
+<script>
+	var delayTimer;
+
+	function delayedUpdateQuantity(cartItemId, quantity) {
+		// Clear any existing timeout
+		clearTimeout(delayTimer);
+
+		// Set a new timeout for 2 seconds
+		delayTimer = setTimeout(function () {
+			updateQuantity(cartItemId, quantity);
+		}, 1500); // 2000 milliseconds = 2 seconds
+	}
+
+	function updateQuantity(cartItemId, quantity) {
+		$.ajax({
+			url: '@Url.Action("UpdateQuantity", "Cart")',
+			type: 'POST',
+			data: {
+				cartItemId: cartItemId,
+				quantity: quantity
+			},
+			success: function (response) {
+				console.log(response);
+				location.reload();
+			},
+			error: function (xhr, status, error) {
+				console.error(error);
+			}
+		});
+	}
+</script>
+<script>
+	console.log("Total steps: @totalSteps");
+	console.log("completedSteps: @completedSteps")
+	console.log("progressWidth: @progressWidth")
+</script>
+
+@section Scripts {
+	@{
+		await Html.RenderPartialAsync("_ValidationScriptsPartial");
+	}
+}

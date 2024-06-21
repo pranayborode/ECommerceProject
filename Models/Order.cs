@@ -1,5 +1,4 @@
-﻿
-using ECommerceProject.Enum;
+﻿using ECommerceProject.Helper;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
@@ -17,7 +16,7 @@ namespace ECommerceProject.Models
         [Required]
         public DateTime OrderDate { get; set; } = DateTime.Now;
 
-        public DateTime? UpdatedDate { get; set; } 
+        public DateTime? UpdatedDate { get; set; }
 
         [Required]
         public int AddressId { get; set; }
@@ -29,7 +28,10 @@ namespace ECommerceProject.Models
         [Required]
         public string PaymentMethod { get; set; }
 
-        public string? RazorpayPaymentId { get; set; }
+        [Required]
+		public string ReceiptId { get; set; }
+
+		public string? RazorpayPaymentId { get; set; }
         public string? RazorpayOrderId { get; set; }
         public string? RazorpaySignature { get; set; }
 

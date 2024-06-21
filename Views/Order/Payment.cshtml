@@ -12,11 +12,13 @@
         <input id="razorpay_signature" type="hidden" name="razorpay_signature" />
         <input id="addressIds" type="hidden" name="addressId" value="@Model.AddressId" />
         <input id="paymentMethod" type="hidden" name="paymentMethod" value="@Model.PaymentMethod" />
+        <input type="hidden" name="receipt" value="@Model.ReceiptId" />
     </form>
 </head>
 
-<body>
-    <button id="rzp-button1">Pay with Razorpay</button>
+<body >
+    <div class ="p-lg-5">
+    <button id="rzp-button1" class="btn btn-success">Pay with Razorpay</button>
     <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
     <script>
         var orderId = "@Html.DisplayFor(model => model.OrderId)"
@@ -64,5 +66,6 @@
             e.preventDefault();
         }
     </script>
+        </div>
 </body>
 </html>

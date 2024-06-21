@@ -18,9 +18,11 @@
                 <thead>
                     <tr>
                         <th>Product Name</th>
+                         <th>Size</th>
                         <th>Quantity</th>
                         <th>Price</th>
-                        <th>Total</th>
+                        <th>Total</th
+                            <th></th>
                     </tr>
                 </thead>
                 <tbody>
@@ -32,8 +34,8 @@
                                 <td>@item.Product.Name</td>
                                 <td>@item.Size</td>
                                 <td>@item.Quantity</td>
-                                <td>@item.Price.ToString("C")</td>
-                                <td>@(item.Price * item.Quantity).ToString("C")</td>
+                                <td>@item.DiscountedPrice.ToString("C")</td>
+                                <td>@(((item.DiscountedPrice * item.Quantity)).ToString("C"))</td>
                             </tr>
                         }
                     }
@@ -59,7 +61,7 @@
             <p><strong>Payment Method:</strong> @Model.PaymentMethod</p>
             <p><strong>Order Status:</strong> @Model.OrderStatus</p>
 
-            <a href="/" class="btn btn-primary">Continue Shopping</a>
+            <a asp-action="Index" asp-controller="Home" class="btn btn-primary">Continue Shopping</a>
         </div>
     </div>
 </body>

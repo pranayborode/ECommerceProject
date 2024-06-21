@@ -9,7 +9,7 @@
 	<div class="container">
 		<div class="row gx-5">
 			<aside class="col-lg-6">
-				<div class="border rounded-4 mb-3 d-flex justify-content-center">
+				<div class="rounded-4 mb-3 d-flex justify-content-center">
 					<a data-fslightbox="mygalley" class="rounded-4" target="_blank" data-type="image" href="https://mdbcdn.b-cdn.net/img/bootstrap-ecommerce/items/detail1/big.webp">
 						@* <img src="~/uploads/product/@Model.Product.Image" style="max-width: 100%; max-height: 80vh; margin: auto;" class="rounded-4 fit" /> *@
 						<img src="@Url.Content(Model.Product.Image)" alt="@Model.Product.Name" style="max-width: 100%; max-height: 80vh; margin: auto;" class="rounded-4 fit" />
@@ -113,18 +113,19 @@
 									<button class="btn btn-white border border-secondary px-3" type="button" id="button-minus" data-mdb-ripple-color="dark">
 										<i class="fas fa-minus"></i>
 									</button>
-									<input type="text" class="form-control text-center border border-secondary" name="quantity" id="quantity-input" value="1" aria-label="Example text with button addon" aria-describedby="button-addon1" />
+									<input type="text" class="form-control text-center border border-secondary" name="quantity" id="quantity-input" value="1" min="1" max="@Model.Product.Stock" aria-label="Example text with button addon" aria-describedby="button-addon1" />
+									
 									<button class="btn btn-white border border-secondary px-3" type="button" id="button-plus" data-mdb-ripple-color="dark">
 										<i class="fas fa-plus"></i>
 									</button>
 								</div>
 							</div>
 						</div>
-						<a href="#" class="btn btn-warning shadow-0"> Buy now </a>
-						<button type="submit" class="btn btn-primary shadow-0" id="addToCartBtn">
-							<i class="me-1 fa fa-shopping-basket"></i> Add to cart
+						<a href="#" class="btn btn-dark shadow-0"> Buy now </a>
+						<button type="submit" class="btn btn-dark shadow-0" id="addToCartBtn">
+							<i class="fa fa-shopping-cart" aria-hidden="true"></i> Add to cart
 						</button>
-						<a href="#" class="btn btn-light border border-secondary py-2 icon-hover px-3"> <i class="me-1 fa fa-heart fa-lg"></i> Save </a>
+						<a href="#" class="btn btn-light border border-secondary icon-hover px-3"> <i class="me-1 fa fa-heart fa-lg"></i> Save </a>
 					</form>
 				</div>
 			</main>
@@ -164,7 +165,7 @@
 
 		minusButton.addEventListener('click', function () {
 			let currentValue = parseInt(quantityInput.value);
-			if (!isNaN(currentValue) && currentValue > 0) {
+			if (!isNaN(currentValue) && currentValue > 1) {
 				quantityInput.value = currentValue - 1;
 				checkQuantity();
 			}
@@ -180,12 +181,18 @@
 
 		function checkQuantity() {
 			var quantity = parseInt(quantityInput.value);
-			var stock = @Model.Product.Stock; // Assuming Product has a property Stock
+			var stock = @Model.Product.Stock; 
 
-			if (quantity > stock) {
+			if (stock == 0) {
 				addToCartBtn.setAttribute('disabled', 'disabled');
+				plusButton.removeAttribute('disabled');
+			}
+
+			if (quantity >= stock) {
+				plusButton.setAttribute('disabled', 'disabled');
+				
 			} else {
-				addToCartBtn.removeAttribute('disabled');
+				plusButton.removeAttribute('disabled');
 			}
 		}
 

@@ -1,42 +1,684 @@
 ﻿@model ECommerceProject.ViewModels.CheckoutViewModel
 
-<h2>Checkout</h2>
+<link href="~/css/icons.min.css" rel="stylesheet" type="text/css">
+@{
+	ViewData["Title"] = "Checkout";
+}
+@{
 
-<div>
-    <h3>Select Delivery Address</h3>
-    <form asp-action="SelectAddress" method="post">
-        @foreach (var address in Model.Addresses)
-        {
-            <div>
-                <input type="radio" name="SelectedAddressId" value="@address.AddressId" />
-                @address.FullAddress
-            </div>
-        }
-        <button type="submit">Select This Address</button>
-    </form>
+	decimal subtotal = 0;
+	decimal grandTotal = 0;
+	decimal discountTotal = 0;
+	decimal amountForFreeDelivery = 0;
+	int progressPercentage = 0;
+	string formattedFreeDeliveryThreshold = "";
+	string formattedAmountForFreeDelivery = "";
+
+	if (Model != null && Model.CartItems != null && Model.CartItems.Any())
+	{
+		const decimal FreeDeliveryThreshold = 499;
+		subtotal = Model.CartItems.Sum(item => item.Quantity * item.DiscountedPrice);
+		grandTotal = Model.CartItems.Sum(item => item.Quantity * item.Price);
+		discountTotal = grandTotal - subtotal;
+		amountForFreeDelivery = FreeDeliveryThreshold - subtotal;
+		progressPercentage = (int)((subtotal / FreeDeliveryThreshold) * 100);
+
+		formattedFreeDeliveryThreshold = ((int)FreeDeliveryThreshold).ToString("C0");
+		formattedAmountForFreeDelivery = ((int)amountForFreeDelivery).ToString("C0");
+
+	}
+}
+
+
+<div class="content-page">
+	<div class="content">
+
+		<!-- Start Content-->
+		<div class="container-fluid">
+
+			<!-- start page title -->
+			<div class="row">
+				<div class="col-12">
+					<div class="page-title-box">
+						@* <h4 class="page-title">Checkout</h4> *@
+						<h3 class="mt-4">@ViewData["Title"]</h3>
+					</div>
+				</div>
+			</div>
+			<!-- end page title -->
+
+			<div class="row">
+				<div class="col-12">
+					<div class="card">
+						<div class="card-body">
+
+							<!-- Checkout Steps -->
+							<ul class="nav nav-pills bg-nav-pills nav-justified mb-3" role="tablist">
+								<li class="nav-item" role="presentation">
+									<a  href="#shipping-information" data-bs-toggle="tab" aria-expanded="false" class="nav-link rounded-0 active" aria-selected="true" role="tab">
+										<i class="fa fa-user" aria-hidden="true font-18"></i>
+										<span class="d-none d-lg-block">Shipping Info</span>
+									</a>
+								</li>
+								<li class="nav-item" role="presentation">
+									<a href="#order-summery" data-bs-toggle="tab" aria-expanded="true" class="nav-link rounded-0" aria-selected="false" tabindex="-1" role="tab">
+										<i class="fa fa-shopping-cart" aria-hidden="true"></i>
+										<span class="d-none d-lg-block">Order Summery</span>
+									</a>
+								</li>
+								<li class="nav-item" role="presentation">
+									<a href="#payment-information" data-bs-toggle="tab" aria-expanded="false" class="nav-link rounded-0" aria-selected="false" tabindex="-1" role="tab">
+										<i class="fa fa-money" aria-hidden="true"></i>
+										<span class="d-none d-lg-block">Payment Info</span>
+									</a>
+								</li>
+							</ul>
+
+							<!-- Steps Information -->
+							<div class="tab-content">
+								<!-- Shipping Content-->
+								<div class="tab-pane show active" id="shipping-information" role="tabpanel">
+									<div class="row">
+										<div class="col-lg-8">
+											<h4 class="mt-2">Saved Address</h4>
+
+											<p class="text-muted mb-3">
+												Fill the form below in order to
+												send you the order's invoice.
+											</p>
+
+											<div class="row">
+												<div class="col-md-12">
+													<form asp-action="SelectAddress" method="post">
+														@foreach (var address in Model.Addresses)
+														{
+															<div class="border p-2 rounded mb-2 mb-md-0">
+																<address class="mb-0 address-lg">
+																	<div class="form-check">
+																		<input type="radio" name="SelectedAddressId" value="@address.AddressId" checked="">
+																		@address.FullAddress
+																		<div class="text-sm-end">
+																			<a asp-action="Edit" asp-controller="Address" asp-route-id="@address.AddressId" class="fw-bold">Edit</a>&nbsp
+																			<a asp-action="Delete" asp-controller="Address" asp-route-id="@address.AddressId" class="fw-bold text-danger">Delete</a>
+																		</div>
+																	</div>
+																</address>
+															</div>
+														}
+														<div class="text-sm-end mb-2">
+															<button class="btn btn-dark btn-sm mt-1" type="submit">Select This Address</button>
+														</div>
+
+													</form>
+													<div class="border p-2 rounded mb-2 mb-md-0">
+														<div id="selectedAddress">
+															@Html.Partial("_SelectedAddress", Model.SelectedAddress)
+														</div>
+													</div>
+												</div>
+											</div>
+											<!-- end row-->
+
+											<h4 class="mt-4">Add New Address</h4>
+
+											<p class="text-muted mb-4">
+												Fill the form below so we can
+												send you the order's invoice.
+											</p>
+
+											<form>
+
+												<div class="row">
+													<div class="col-md-6">
+														<div class="mb-3">
+															<label for="new-adr-first-name" class="form-label">First Name</label>
+															<input class="form-control" type="text" placeholder="Enter your first name" id="new-adr-first-name">
+														</div>
+													</div>
+													<div class="col-md-6">
+														<div class="mb-3">
+															<label for="new-adr-phone" class="form-label">Phone <span class="text-danger">*</span></label>
+															<input class="form-control" type="text" placeholder="(xx) xxx xxxx xxx" id="new-adr-phone">
+														</div>
+													</div>
+												</div> <!-- end row -->
+												<div class="row">
+													<div class="col-md-6">
+														<div class="mb-3">
+															<label for="new-adr-address" class="form-label">Apartment</label>
+															<input class="form-control" type="text" placeholder="Enter Apartment Name" id="new-adr-address">
+														</div>
+													</div>
+													<div class="col-md-6">
+														<div class="mb-3">
+															<label for="new-adr-address" class="form-label">Street</label>
+															<input class="form-control" type="text" placeholder="Enter Stree Name" id="new-adr-address">
+														</div>
+													</div>
+												</div> <!-- end row -->
+												<div class="row">
+													<div class="col-6">
+														<div class="mb-3">
+															<label for="new-adr-address" class="form-label">Landmark</label>
+															<input class="form-control" type="text" placeholder="Enter Landmark" id="new-adr-address">
+														</div>
+													</div>
+													<div class="col-md-6">
+														<div class="mb-3">
+															<label for="new-adr-town-city" class="form-label">Town / City</label>
+															<input class="form-control" type="text" placeholder="Enter your city name" id="new-adr-town-city">
+														</div>
+													</div>
+												</div> <!-- end row -->
+												<div class="row">
+													<div class="col-md-6">
+														<div class="mb-3">
+															<label for="new-adr-state" class="form-label">State</label>
+															<input class="form-control" type="text" placeholder="Enter your state" id="new-adr-state">
+														</div>
+													</div>
+													<div class="col-md-6">
+														<div class="mb-3">
+															<label for="new-adr-zip-postal" class="form-label">Zip / Postal Code</label>
+															<input class="form-control" type="text" placeholder="Enter your zip code" id="new-adr-zip-postal">
+														</div>
+													</div>
+												</div> <!-- end row -->
+												<div class="row">
+													<div class="col-6">
+														<div class="mb-3">
+															<label class="form-label">Country</label>
+															<input class="form-control" type="text" placeholder="Enter Contry Name" id="new-adr-zip-postal">
+														</div>
+													</div>
+												</div> <!-- end row -->
+
+
+
+												<div class="row mt-4">
+													<div class="col-sm-6">
+														<a asp-controller="Cart" asp-action="Index" class="btn text-muted d-none d-sm-inline-block btn-link fw-semibold">
+															<i class="fa fa-arrow-left" aria-hidden="true"></i> Back to Shopping Cart
+														</a>
+													</div> <!-- end col -->
+													<div class="col-sm-6">
+														<div class="text-sm-end">
+															<a href="apps-ecommerce-checkout.html" class="btn btn-warning">
+																<i class="fa fa-shopping-cart" aria-hidden="true"></i> Continue to Summery
+															</a>
+														</div>
+													</div> <!-- end col -->
+												</div> <!-- end row -->
+											</form>
+										</div>
+										<div class="col-lg-4">
+											<div class="border p-3 mt-4 mt-lg-0 rounded">
+												<h4 class="header-title mb-3">Order Summary</h4>
+												<div class="table-responsive">
+													<table class="table mb-0">
+														<tbody>
+															<tr>
+																<td>Grand Total :</td>
+																<td>@grandTotal.ToString("C")</td>
+															</tr>
+															<tr>
+																<td>Discount : </td>
+																<td>- @discountTotal.ToString("C")</td>
+															</tr>
+															<tr>
+																<td>Shipping Charge :</td>
+																@if (subtotal < 499)
+																{
+																	<td>$25</td>
+																}
+																else
+																{
+																	<td>Free</td>
+																}
+															</tr>
+															<tr>
+																<td>Promotion Applied: </td>
+																<td></td>
+															</tr>
+															<tr>
+																<th>Total :</th>
+																<th>@subtotal.ToString("C")</th>
+															</tr>
+														</tbody>
+													</table>
+												</div>
+												<!-- end table-responsive -->
+											</div>
+											<div class="alert alert-warning mt-3" role="alert">
+												Use coupon code <strong>HYPBM</strong> and get 10% discount !
+											</div>
+
+											<div class="input-group mt-3">
+												<input type="text" class="form-control" placeholder="Coupon code" aria-label="Recipient's username">
+												<button class="input-group-text btn-light" type="button">Apply</button>
+											</div>
+										</div> <!-- end col -->
+									</div> <!-- end row-->
+								</div>
+								<!-- End Shipping Information Content-->
+								<!-- Billing Content-->
+								<div class="tab-pane" id="order-summery" role="tabpanel">
+									<div class="row">
+										<div class="col-lg-8">
+											<h4 class="mt-2">Order Summery</h4>
+
+											<p class="text-muted mb-4">
+												Review items and delivery
+											</p>
+
+											<div class="container mb-5">
+												<div class="shopping-cart">
+													<div class="cart-items">
+														@foreach (var item in Model.CartItems)
+														{
+															<div class="cart-item">
+																@* <div class="mr-2">
+															<input type="checkbox" id="item@item.CartItemId" />
+															</div> *@
+																<div>
+																	<img src="@Url.Content(item.Product.Image)" alt="Product Image" />
+																</div>
+																<div class="cart-item-details">
+																	<p>@item.Product.Name</p>
+																	<p>
+																		<span class="original-price">@item.Price.ToString("C")</span>
+																		<span class="discounted-price">@item.DiscountedPrice.ToString("C")</span>
+																		<span class="discount-percentage">(@item.OfferPercentage% off)</span>
+																	</p>
+																	<div class="product-size-text">
+																		<span>Size: @item.Size</span>
+																	</div>
+																	<div style="display: flex; align-items: center;">
+																		<span class="product-size-text mr-1">Qty:</span>
+																		<input type="number" class="quantity" value="@item.Quantity" min="1" onchange="updateQuantity(@item.CartItemId, this.value)" />
+																	</div>
+																</div>
+															</div>
+														}
+
+													</div>
+
+												</div>
+												<div class="row mt-4">
+													<div class="col-sm-6">
+														<a asp-controller="Cart" asp-action="Index" class="btn text-muted d-none d-sm-inline-block btn-link fw-semibold">
+															<i class="fa fa-arrow-left" aria-hidden="true"></i> Back to Shopping Cart
+														</a>
+													</div> <!-- end col -->
+													<div class="col-sm-6">
+														<div class="text-sm-end">
+															<button class="btn btn-warning" type="submit">
+																<i class="fa fa-money" aria-hidden="true"></i>Continue to Payment
+															</button>
+														</div>
+													</div> <!-- end col -->
+												</div> <!-- end row-->
+											</div>
+
+										</div>
+										<div class="col-lg-4">
+											<div class="border p-3 mt-4 mt-lg-0 rounded">
+												<h4 class="header-title mb-3">Order Summary</h4>
+
+												<div class="table-responsive">
+													<table class="table mb-0">
+														<tbody>
+															<tr>
+																<td>Grand Total :</td>
+																<td>@grandTotal.ToString("C")</td>
+															</tr>
+															<tr>
+																<td>Discount : </td>
+																<td>- @discountTotal.ToString("C")</td>
+															</tr>
+															<tr>
+																<td>Shipping Charge :</td>
+																@if (subtotal < 499)
+																{
+																	<td>$25</td>
+																}
+																else
+																{
+																	<td>Free</td>
+																}
+															</tr>
+															<tr>
+																<td>Promotion Applied: </td>
+																<td></td>
+															</tr>
+															<tr>
+																<th>Total :</th>
+																<th>@subtotal.ToString("C")</th>
+															</tr>
+														</tbody>
+													</table>
+												</div>
+												<!-- end table-responsive -->
+											</div>
+											<div class="alert alert-warning mt-3" role="alert">
+												Use coupon code <strong>HYPBM</strong> and get 10% discount !
+											</div>
+
+											<div class="input-group mt-3">
+												<input type="text" class="form-control" placeholder="Coupon code" aria-label="Recipient's username">
+												<button class="input-group-text btn-light" type="button">Apply</button>
+											</div>
+										</div> <!-- end col -->
+									</div> <!-- end row-->
+								</div>
+								<!-- End Billing Information Content-->
+								<!-- Payment Content-->
+								<div class="tab-pane" id="payment-information" role="tabpanel">
+									<div class="row">
+
+										<div class="col-lg-8">
+											<h4 class="mt-2">Payment Selection</h4>
+
+											<p class="text-muted mb-4">
+												Fill the form below in order to
+												send you the order's invoice.
+											</p>
+
+
+
+
+
+											<form asp-action="PlaceOrder" method="post">
+												<input type="hidden" name="SelectedAddressId" value="@Model.SelectedAddressId" />
+												<!-- Pay with Razorpay box-->
+												<div class="border p-3 mb-3 rounded">
+													<div class="row">
+														<div class="col-sm-8">
+															<div class="form-check">
+																<input type="radio" id="BillingOptRadio3" name="SelectedPaymentMethod" value="Razorpay" class="form-check-input">
+																<label class="form-check-label font-16 fw-bold" for="BillingOptRadio3">Pay with Razorpay</label>
+															</div>
+															<p class="mb-0 ps-3 pt-1">You will be redirected to Razorpay website to complete your purchase securely.</p>
+														</div>
+														<div class="col-sm-4 text-sm-end mt-3 mt-sm-0">
+															<img src="~/images/payments/Razorpay.png" height="30" alt="paypal-img">
+														</div>
+													</div>
+												</div>
+												<!-- end Pay with Payoneer box-->
+												<!-- Cash on Delivery box-->
+												<div class="border p-3 mb-3 rounded">
+													<div class="row">
+														<div class="col-sm-8">
+															<div class="form-check">
+																<input type="radio" id="BillingOptRadio4" name="SelectedPaymentMethod" value="COD" class="form-check-input">
+																<label class="form-check-label font-16 fw-bold" for="BillingOptRadio4">Cash on Delivery</label>
+															</div>
+															<p class="mb-0 ps-3 pt-1">Pay with cash when your order is delivered.</p>
+														</div>
+														<div class="col-sm-4 text-sm-end mt-3 mt-sm-0">
+															<img src="~/images/payments/cod.png" height="22" alt="paypal-img">
+														</div>
+													</div>
+												</div>
+												<!-- end Cash on Delivery box-->
+
+												<div class="row mt-4">
+													<div class="col-sm-6">
+														<a asp-controller="Cart" asp-action="Index" class="btn text-muted d-none d-sm-inline-block btn-link fw-semibold">
+															<i class="fa fa-arrow-left" aria-hidden="true"></i> Back to Shopping Cart
+														</a>
+													</div> <!-- end col -->
+													<div class="col-sm-6">
+														<div class="text-sm-end">
+															<button class="btn btn-warning" type="submit">Confirm Order</button>
+														</div>
+													</div> <!-- end col -->
+												</div> <!-- end row-->
+											</form>
+										</div> <!-- end col -->
+
+										<div class="col-lg-4">
+
+											<div class="border p-3 mt-4 mt-lg-0 rounded">
+												<h4 class="header-title mb-3">Order Summary</h4>
+
+												<div class="table-responsive">
+													<table class="table mb-0">
+														<tbody>
+															<tr>
+																<td>Grand Total :</td>
+																<td>@grandTotal.ToString("C")</td>
+															</tr>
+															<tr>
+																<td>Discount : </td>
+																<td>- @discountTotal.ToString("C")</td>
+															</tr>
+															<tr>
+																<td>Shipping Charge :</td>
+																@if (subtotal < 499)
+																{
+																	<td>$25</td>
+																}
+																else
+																{
+																	<td>Free</td>
+																}
+															</tr>
+															<tr>
+																<td>Promotion Applied: </td>
+																<td></td>
+															</tr>
+															<tr>
+																<th>Total :</th>
+																<th>@subtotal.ToString("C")</th>
+															</tr>
+														</tbody>
+													</table>
+												</div>
+												<!-- end table-responsive -->
+											</div>
+											<div class="alert alert-warning mt-3" role="alert">
+												Use coupon code <strong>HYPBM</strong> and get 10% discount !
+											</div>
+
+											<div class="input-group mt-3">
+												<input type="text" class="form-control" placeholder="Coupon code" aria-label="Recipient's username">
+												<button class="input-group-text btn-light" type="button">Apply</button>
+											</div>
+										</div> <!-- end col -->
+									</div> <!-- end row-->
+								</div>
+								<!-- End Payment Information Content-->
+
+							</div> <!-- end tab content-->
+
+						</div> <!-- end card-body-->
+					</div> <!-- end card-->
+				</div> <!-- end col -->
+			</div>
+			<!-- end row-->
+
+		</div> <!-- container -->
+
+	</div> <!-- content -->
+
 </div>
 
-<div id="selectedAddress">
-    @Html.Partial("_SelectedAddress", Model.SelectedAddress)
-</div>
 
-<div>
-    <h3>Order Summary</h3>
-    <ul>
-        @foreach (var item in Model.CartItems)
-        {
-            <li>@item.Product.Name - Quantity: @item.Quantity - Price: @item.DiscountedPrice</li>
-        }
-    </ul>
-    <p>Total Amount: @Model.TotalAmount</p>
-</div>
+<script>
+	function updateQuantity(cartItemId, quantity) {
+		$.ajax({
+			url: '@Url.Action("UpdateQuantity", "Cart")',
+			type: 'POST',
+			data: {
+				cartItemId: cartItemId,
+				quantity: quantity
+			},
+			success: function (response) {
+				console.log(response);
+				location.reload();
+			},
+			error: function (xhr, status, error) {
+				console.error(error);
+			}
+		});
+	}
+</script>
 
-<div>
-    <h3>Payment Method</h3>
-    <form asp-action="PlaceOrder" method="post">
-        <input type="hidden" name="SelectedAddressId" value="@Model.SelectedAddressId" />
-        <input type="radio" name="SelectedPaymentMethod" value="Razorpay" /> Razorpay
-        <input type="radio" name="SelectedPaymentMethod" value="COD" /> Cash on Delivery
-        <button type="submit">Confirm Order</button>
-    </form>
-</div>
+<style>
+	body {
+		font-family: Arial, sans-serif;
+	}
+
+	.container {
+		margin-bottom: 50px;
+		padding: 10px;
+	}
+
+	.shopping-cart {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 20px;
+	}
+
+	.cart-items {
+		flex: 1;
+		min-width: 300px;
+		max-width: 75%;
+	}
+
+	.summary {
+		flex: 0 0 300px;
+		padding: 20px;
+		border: 1px solid #ddd;
+		border-radius: 5px;
+	}
+
+	.cart-item {
+		display: flex;
+		align-items: center;
+		border-bottom: 1px solid #ddd;
+		padding: 15px 0;
+	}
+
+		.cart-item img {
+			width: 100px;
+			margin-right: 20px;
+		}
+
+	.cart-item-details {
+		flex: 1;
+	}
+
+	p {
+		margin: 0 0 0.5rem 0;
+	}
+
+	.price {
+		font-size: 18px;
+		font-weight: bold;
+	}
+
+	.original-price {
+		color: gray;
+		text-decoration: line-through;
+		margin-right: 10px;
+	}
+
+	.discounted-price {
+		font-size: 16px;
+		font-weight: bold;
+		margin-right: 10px;
+	}
+
+	.discount-percentage {
+		color: green;
+	}
+
+	.quantity {
+		width: 60px;
+		text-align: center;
+	}
+
+	.cart-item-actions {
+		display: flex;
+		align-items: center;
+		gap: 10px;
+	}
+
+		.cart-item-actions a {
+			color: #0073bb;
+			text-decoration: none;
+			cursor: pointer;
+		}
+
+	.subtotal {
+		margin-top: 20px;
+		text-align: left;
+	}
+
+	.subtotal-title {
+		font-size: 16px;
+	}
+
+	.subtotal-title {
+		font-size: 16px;
+	}
+
+	.subtotal-amount {
+		font-size: 16px;
+		font-weight: bold;
+	}
+
+	.proceed-button {
+		text-align: center;
+		margin-top: 20px;
+	}
+
+		.proceed-button input {
+			background-color: #f0c14b;
+			border: 1px solid #a88734;
+			padding: 8px 8px;
+			font-size: 16px;
+			cursor: pointer;
+		}
+
+	.a-icon-text-separator, .a-text-separator {
+		display: inline-block;
+		width: 1.5px;
+		background-color: #d4d4d4;
+		line-height: 0;
+		height: 14px;
+		vertical-align: middle;
+	}
+
+	.a-size-small {
+		font-size: 14px !important;
+		line-height: 16px !important;
+	}
+
+	.product-size-text {
+		font-size: 14px !important;
+		margin-top: 0;
+		margin-bottom: 0.2rem;
+	}
+
+	media (max-width: 768px) {
+		.shopping-cart
+
+	{
+		flex-direction: column;
+	}
+
+	.summary {
+		order: -1;
+		flex: 0 0 auto;
+	}
+
+	}
+</style>
+
+
+
+

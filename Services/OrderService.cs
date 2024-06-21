@@ -36,6 +36,11 @@ namespace ECommerceProject.Services
            return repo.GetOrders();
         }
 
+		public IEnumerable<Order> GetOrdersDesByDate()
+		{
+			return repo.GetOrdersDesByDate();
+		}
+
 		public int GetPendingOrderCount()
 		{
             return repo.GetPendingOrderCount();

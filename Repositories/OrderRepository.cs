@@ -1,5 +1,5 @@
 ﻿using ECommerceProject.Data;
-using ECommerceProject.Enum;
+using ECommerceProject.Helper;
 using ECommerceProject.Models;
 using Microsoft.EntityFrameworkCore;
 
@@ -35,7 +35,21 @@ namespace ECommerceProject.Repositories
 
         public int EditOrder(Order order)
         {
-            var _order = _context.Orders.Find(order.OrderId);
+			var existingOrder = _context.Orders.Find(order.OrderId);
+
+			if (existingOrder == null)
+			{
+				return 0; // Return 0 or handle accordingly if order not found
+			}
+
+			// Update only the properties that are modified
+			_context.Entry(existingOrder).CurrentValues.SetValues(order);
+
+			// Ensure related entities are not modified unintentionally
+			_context.Entry(existingOrder).Collection(o => o.OrderItems).IsModified = false; // Assuming OrderItems should not be updated here
+
+			return _context.SaveChanges();
+			/*var _order = _context.Orders.Find(order.OrderId);
             if (order != null)
             {
                 _context.Orders.Update(order);
@@ -44,8 +58,9 @@ namespace ECommerceProject.Repositories
             else
             {
                 return 0;
-            }
-        }
+            }*/
+
+		}
 
         public Order GetOrderById(int id)
         {
@@ -62,6 +77,15 @@ namespace ECommerceProject.Repositories
         {
             return _context.Orders.ToList();
         }
+		public IEnumerable<Order> GetOrdersDesByDate()
+		{
+           
+			return _context.Orders
+                .OrderByDescending(o=>o.OrderDate)
+                .Include(o=>o.Address)
+                .Include(o=>o.OrderItems)
+                .ToList();
+		}
 
 		public int GetPendingOrderCount()
 		{
@@ -73,5 +97,6 @@ namespace ECommerceProject.Repositories
 
 			return pendingOrders.Count;
 		}
+       
 	}
 }

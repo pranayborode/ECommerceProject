@@ -48,7 +48,14 @@ namespace ECommerceProject.Controllers
             return View(model);
         }
 
-        [Authorize(Roles = "Customer")]
+		[Authorize(Roles = "Admin")]
+		public ActionResult SoldOutProducts()
+		{
+			var model = service.GetProducts();
+			return View(model);
+		}
+
+		[Authorize(Roles = "Customer")]
         public ActionResult UserPage()
         {
             var model = service.GetProducts();

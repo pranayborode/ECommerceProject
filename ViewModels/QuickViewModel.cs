@@ -4,7 +4,9 @@ namespace ECommerceProject.ViewModels
 {
 	public class QuickViewModel
 	{
-		public Product Product { get; set; }
+        internal object PaymetnStatus;
+
+        public Product Product { get; set; }
 		public IEnumerable<Product> SimilarProducts { get; set; }
 
 	}

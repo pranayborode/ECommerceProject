@@ -25,18 +25,11 @@ namespace ECommerceProject.Models
         [Required]
         public bool IsAvailable { get; set; }
 
-        /*[Required]
-        [StringLength(50)]
-        public string SKU { get; set; }*/
-
         public string? Image { get; set; }
 
-        // Offer percentage
         [Range(0, 100)]
         public int OfferPercentage { get; set; } 
 
-        /*[Required]
-        public string Gender { get; set; } */
          
         // Foreign key properties
         public int MainCategoryId { get; set; }
@@ -44,7 +37,6 @@ namespace ECommerceProject.Models
         [Required]
         public int BrandId { get; set; }
 
-        // Navigation properties
         [ForeignKey("MainCategoryId")]
         public virtual MainCategory MainCategory { get; set; }
 
@@ -54,7 +46,10 @@ namespace ECommerceProject.Models
         [ForeignKey("BrandId")]
         public virtual Brand Brand { get; set; }
         public virtual ICollection<ProductImage> Images { get; set; }
-
-
     }
 }
+
+
+/*[Required]
+	   [StringLength(50)]
+	   public string SKU { get; set; }*/

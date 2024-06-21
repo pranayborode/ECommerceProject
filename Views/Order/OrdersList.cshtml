@@ -1,0 +1,136 @@
+﻿@model IEnumerable<ECommerceProject.Models.Order>
+@using ECommerceProject.Helper
+@{
+    ViewData["Title"] = "OrdersList";
+}
+
+<h3>Orders</h3>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.Address.FullName)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.OrderDate)
+            </th>
+           
+            <th>
+                @Html.DisplayNameFor(model => model.TotalAmount)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.PaymentMethod)
+            </th>
+            
+            <th>
+                @Html.DisplayNameFor(model => model.PaymentStatus)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.OrderStatus)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Address.City)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.Address.FullName)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.OrderDate)
+            </td>
+           
+            <td>
+                @Html.DisplayFor(modelItem => item.TotalAmount)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.PaymentMethod)
+            </td>
+            <td>
+                    @if (item.PaymentStatus == ECommerceProject.Helper.PaymentStatus.Paid)
+                    {
+                        <h6 class="mb-2 badge bg-success-subtle text-success text-uppercase">@item.PaymentStatus</h6>
+
+                    }
+                    else if (item.PaymentStatus == ECommerceProject.Helper.PaymentStatus.Pending)
+                    {
+                        <h6 class="mb-2 badge bg-primary-subtle text-primary text-uppercase">@item.PaymentStatus</h6>
+                    }
+                    else
+                    {
+                        <h6 class="mb-2 badge bg-danger-subtle text-danger text-uppercase">@item.PaymentStatus</h6>
+                    }
+            </td>
+            <td>
+
+                   
+                    @if (item.OrderStatus == ECommerceProject.Helper.OrderStatus.Confirmed)
+                    {
+                        <h6 class="mb-2 badge bg-primary-subtle text-primary text-uppercase">@item.OrderStatus</h6>
+                    }
+                    else if (item.OrderStatus == ECommerceProject.Helper.OrderStatus.Packed)
+                    {
+                        <h6 class="mb-2 badge bg-primary-subtle text-warning text-uppercase">@item.OrderStatus</h6>
+                    }
+                    else if (item.OrderStatus == ECommerceProject.Helper.OrderStatus.Shipped)
+                    {
+                        <h6 class="mb-2 badge bg-primary-subtle text-info text-uppercase">@item.OrderStatus</h6>
+                    }
+                    else if (item.OrderStatus == ECommerceProject.Helper.OrderStatus.Delivered)
+                    {
+                        <h6 class="mb-2 badge bg-primary-subtle text-success text-uppercase">@item.OrderStatus</h6>
+                    }
+                    else if (item.OrderStatus == ECommerceProject.Helper.OrderStatus.Cancelled)
+                    {
+                        <h6 class="mb-2 badge bg-primary-subtle text-danger text-uppercase">@item.OrderStatus</h6>
+                    }
+                    else if (item.OrderStatus == ECommerceProject.Helper.OrderStatus.Returned)
+                    {
+                        <h6 class="mb-2 badge bg-success-subtle text-dark text-uppercase">@item.OrderStatus</h6>
+                    }
+                    else
+                    {
+                        <h6 class="mb-2 badge bg-danger-subtle text-secondary text-uppercase">@item.OrderStatus</h6>
+                    }
+              @*   @Html.DisplayFor(modelItem => item.OrderStatus) *@
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Address.City)
+            </td>
+            <td>
+                    <a asp-action="Edit" asp-route-id="@item.OrderId"><i class="fa fa-edit"></i></a><br>
+                    <a asp-action="OrderDetails" asp-route-id="@item.OrderId"><i class="fa fa-eye"></i></a><br>
+                    <a asp-action="Delete" asp-route-id="@item.OrderId"><i class="fa fa-trash text-danger"></i></a>
+            </td>
+        </tr>
+}
+    </tbody>
+</table>
+
+                <script>
+                        /* //------------ */
+        .equal - height - cards {
+        display: flex;
+        flex - wrap: wrap;
+    }
+
+        .equal - height - cards > .col - lg - 4 {
+        display: flex;
+        flex - direction: column;
+    }
+
+        .equal - height - cards.card {
+        flex: 1;
+        display: flex;
+        flex - direction: column;
+    }
+
+        .equal - height - cards.card - body {
+        flex: 1;
+    }
+                </script>

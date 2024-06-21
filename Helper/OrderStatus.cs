@@ -1,10 +1,11 @@
-﻿namespace ECommerceProject.Enum
+﻿namespace ECommerceProject.Helper
 {
     public enum OrderStatus
     {
         Pending,
         Confirmed,
-        Shipped,
+		Packed,
+		Shipped,
         Delivered,
         Cancelled,
         Returned
