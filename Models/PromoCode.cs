@@ -15,7 +15,7 @@ namespace ECommerceProject.Models
 		public string CodeName { get; set; }
 
 		[StringLength(100, ErrorMessage = "Message cannot exceed {1} characters.")]
-		public string Messsage { get; set; }
+		public string Message { get; set; }
 
 		[Display(Name = "Start Date")]
 		[DataType(DataType.Date)]

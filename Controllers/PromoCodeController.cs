@@ -90,7 +90,7 @@ namespace ECommerceProject.Controllers
                 {
                     PromoCodeId = viewModel.PromoCode.PromoCodeId,
                     CodeName = viewModel.PromoCode.CodeName,
-                    Messsage = viewModel.PromoCode.Messsage,
+                    Message = viewModel.PromoCode.Message,
                     StartDate = viewModel.PromoCode.StartDate,
                     EndDate = viewModel.PromoCode.EndDate,
                     NoOfUsers = viewModel.PromoCode.NoOfUsers,
@@ -145,21 +145,27 @@ namespace ECommerceProject.Controllers
             }
         }
 
-        
-        public IActionResult ApplyPromoCode(string codeName, decimal orderAmount)
-        {
-            try
-            {
-                var discountAmount = _promoCodeService.ApplyPromoCode(codeName, orderAmount);
-                return Json(new { success = true, discountAmount });
 
-            }
-            catch (Exception ex)
-            {
-                ViewBag.ErrorMessage = ex.Message;
-                return Json(new { success = false, message = ex.Message });
-            }
-        }
+		[HttpGet]
+		public IActionResult ApplyPromoCode(string codeName, decimal orderAmount)
+		{
+			var response = new { success = false, discountAmount = 0.0m, message = "Invalid promo code." };
 
-    }
+			try
+			{
+				var discount = _promoCodeService.ApplyPromoCode(codeName, orderAmount);
+				if (discount > 0)
+				{
+					response = new { success = true, discountAmount = discount, message = "Promo code applied successfully." };
+				}
+			}
+			catch (Exception ex)
+			{
+				response = new { success = false, discountAmount = 0.0m, message = ex.Message };
+			}
+
+			return Json(response);
+		}
+
+	}
 }
