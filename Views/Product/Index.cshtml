@@ -35,20 +35,22 @@
 					<th>
 						@Html.DisplayNameFor(model => model.IsAvailable)
 					</th>
-					
+					<th>
+						@Html.DisplayNameFor(model => model.IsActive)
+					</th>
 					<th>
 						@Html.DisplayNameFor(model => model.Image)
 					</th>
-					
+
 					<th>
 						@Html.DisplayNameFor(model => model.MainCategory)
 					</th>
 					<th>
 						@Html.DisplayNameFor(model => model.SubCategory)
 					</th>
-					<th>
-						@Html.DisplayNameFor(model => model.Brand)
-					</th>
+					@* <th>
+					@Html.DisplayNameFor(model => model.Brand)
+					</th> *@
 					<th>Action</th>
 				</tr>
 			</thead>
@@ -77,23 +79,28 @@
 							</span>
 							@* @Html.DisplayFor(modelItem => item.IsAvailable) *@
 						</td>
-						
+						<td>
+							<span class="@(item.IsActive ? "available" : "soldout")">
+								@(item.IsActive ? "Available" : "Not Available")
+							</span>
+							@* @Html.DisplayFor(modelItem => item.IsAvailable) *@
+						</td>
 						@* <td>
 					@Html.DisplayFor(modelItem => item.Image)
 					</td> *@
 						<td>
 							<img src="@Url.Content(item.Image)" style="width:auto; height:70px;" />
 						</td>
-						
+
 						<td>
 							@Html.DisplayFor(modelItem => item.MainCategory.Name)
 						</td>
 						<td>
 							@Html.DisplayFor(modelItem => item.SubCategory.Name)
 						</td>
-						<td>
-							@(item.Brand?.Name ?? "No Brand")
-						</td>
+						@* <td>
+					@(item.Brand?.Name ?? "No Brand")
+					</td> *@
 
 						<td>
 							<a asp-action="Edit" asp-route-id="@item.ProductId"><i class="fa fa-edit"></i></a><br>

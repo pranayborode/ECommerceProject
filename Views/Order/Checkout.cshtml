@@ -22,13 +22,14 @@
 		discountTotal = grandTotal - subtotal;
 		amountForFreeDelivery = FreeDeliveryThreshold - subtotal;
 		progressPercentage = (int)((subtotal / FreeDeliveryThreshold) * 100);
-		@if (subtotal < 499)
+	@if (subtotal < 499)
 		{
 			subtotal += 40;
 		}
 		formattedFreeDeliveryThreshold = ((int)FreeDeliveryThreshold).ToString("C0");
 		formattedAmountForFreeDelivery = ((int)amountForFreeDelivery).ToString("C0");
 
+		Model.TotalAmount = subtotal;
 	}
 }
 <div class="content-page">
@@ -389,9 +390,10 @@
 									</div>
 
 									<div class="input-group mt-3">
-										<input type="text" class="form-control" placeholder="Coupon code" aria-label="Recipient's username">
-										<button class="input-group-text btn-light" type="button">Apply</button>
+										<input type="text" id="promoCode" class="form-control" placeholder="Coupon code" aria-label="Coupon code">
+										<button id="applyPromoCode" class="input-group-text btn-light" type="button">Apply</button>
 									</div>
+									<div id="promoCodeMessage"></div>
 								</div> <!-- end col -->
 
 							</div>
@@ -406,7 +408,35 @@
 	</div> <!-- content -->
 
 </div>
+@section Scripts {
+	
+	<script>
+		$(document).ready(function () {
+			$('#applyPromoCode').click(function () {
+				var promoCode = $('#promoCode').val();
+				var orderAmount = @Model.TotalAmount; // Ensure this is defined in the ViewModel
+				$.ajax({
+					url: '@Url.Action("ApplyPromoCode", "PromoCode")',
+					
+					type: 'GET',
+					data: { codeName: promoCode, orderAmount: orderAmount },
+					success: function (response) {
+						if (response.success) {
+							$('#promoCodeMessage').text('Promo code applied successfully! Discount: ' + response.discountAmount.toFixed(2));
+							$('#totalAmount').text((orderAmount - response.discountAmount).toFixed(2));
+						} else {
+							$('#promoCodeMessage').text('Error: ' + response.message);
+						}
+					},
+					error: function () {
+						$('#promoCodeMessage').text('Error applying promo code.');
+					}
+				});
+			});
+		});
 
+	</script>
+}
 
 <script>
 	function updateQuantity(cartItemId, quantity) {

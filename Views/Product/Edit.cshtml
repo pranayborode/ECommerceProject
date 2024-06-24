@@ -56,11 +56,24 @@
 							</div>
 						</div>
 						<div class="col-md-6">
-							<div class="form-group">
-								<label asp-for="IsAvailable" class="control-label" for="isAvailableToggle"></label>
-								<div class="custom-control custom-switch mt-1">
-									<input type="checkbox" class="custom-control-input" id="isAvailableToggle" asp-for="IsAvailable">
-									<label class="custom-control-label" for="isAvailableToggle"></label>
+							<div class="row">
+								<div class="col-md-3">
+									<div class="form-group">
+										<label asp-for="IsAvailable" class="control-label" for="isAvailableToggle"></label>
+										<div class="custom-control custom-switch mt-1">
+											<input type="checkbox" class="custom-control-input" id="isAvailableToggle" asp-for="IsAvailable">
+											<label class="custom-control-label" for="isAvailableToggle"></label>
+										</div>
+									</div>
+								</div>
+								<div class="col-md-3">
+									<div class="form-group">
+										<label asp-for="IsActive" class="control-label" for="isActiveToggle"></label>
+										<div class="custom-control custom-switch mt-1">
+											<input type="checkbox" class="custom-control-input" id="isActiveToggle" asp-for="IsActive">
+											<label class="custom-control-label" for="isActiveToggle"></label>
+										</div>
+									</div>
 								</div>
 							</div>
 						</div>

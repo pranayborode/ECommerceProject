@@ -44,6 +44,7 @@ namespace ECommerceProject.Repositories
 				pro.Price = product.Price;
 				pro.Stock = product.Stock;
 				pro.IsAvailable = product.IsAvailable;
+				pro.IsActive = product.IsActive;
 				pro.Image = product.Image;
 				pro.OfferPercentage = product.OfferPercentage;
 				pro.MainCategory = product.MainCategory;
@@ -57,6 +58,16 @@ namespace ECommerceProject.Repositories
 			{
 				return 0;
 			}
+		}
+
+		public IEnumerable<Product> GetActiveProducts()
+		{
+			return _context.Products
+				.Where(p=>p.IsActive == true)
+				.Include(p => p.MainCategory)
+				.Include(p => p.SubCategory)
+				.Include(p => p.Brand)
+				.ToList();
 		}
 
 		public Product GetProductById(int id)

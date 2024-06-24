@@ -37,7 +37,7 @@ namespace ECommerceProject.Controllers
         public IActionResult Index()
 		{
 	
-            IEnumerable<Product> products = _productService.GetProducts();
+            IEnumerable<Product> products = _productService.GetActiveProducts();
            
             if (products == null)
             {
@@ -46,7 +46,7 @@ namespace ECommerceProject.Controllers
 
             return View(products);
 		}
-
+		[HttpGet]
         public ActionResult UserPage()
         {
             var model = _productService.GetProducts();

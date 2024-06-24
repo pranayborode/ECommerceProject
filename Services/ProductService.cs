@@ -26,6 +26,11 @@ namespace ECommerceProject.Services
 			return repo.EditProduct(product);
 		}
 
+		public IEnumerable<Product> GetActiveProducts()
+		{
+			return repo.GetActiveProducts();
+		}
+
 		public Product GetProductById(int id)
 		{
 			return repo.GetProductById(id);

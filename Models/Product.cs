@@ -28,9 +28,13 @@ namespace ECommerceProject.Models
         public string? Image { get; set; }
 
         [Range(0, 100)]
-        public int OfferPercentage { get; set; } 
+        public int OfferPercentage { get; set; }
+
+        [Required]
+        public bool IsActive { get; set; }
          
-        // Foreign key properties
+        // For
+        // eign key properties
         public int MainCategoryId { get; set; }
         public int SubCategoryId { get; set; }
         [Required]

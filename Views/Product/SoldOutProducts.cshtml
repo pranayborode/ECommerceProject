@@ -32,6 +32,9 @@
 					<th>
 						@Html.DisplayNameFor(model => model.IsAvailable)
 					</th>
+					<th>
+						@Html.DisplayNameFor(model => model.IsActive)
+					</th>
 
 					<th>
 						@Html.DisplayNameFor(model => model.Image)
@@ -69,8 +72,8 @@
 							@Html.DisplayFor(modelItem => item.OfferPercentage)%
 						</td>
 						<td>
-							<span class="@(item.IsAvailable ? "available" : "soldout")">
-								@(item.IsAvailable ? "Available" : "SoldOut")
+							<span class="@(item.IsActive ? "available" : "notavailable")">
+								@(item.IsActive ? "Available" : "NotAvailable")
 							</span>
 							@* @Html.DisplayFor(modelItem => item.IsAvailable) *@
 						</td>

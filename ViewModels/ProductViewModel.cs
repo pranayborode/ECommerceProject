@@ -24,10 +24,13 @@ namespace ECommerceProject.ViewModels
         [Required]
 		public int Stock { get; set; }
 
+	
 		[Required]
 		public bool IsAvailable { get; set; }
 
-		
+
+		[Required]
+		public bool IsActive { get; set; }
 
 		public IFormFile? Image { get; set; }
 		public string ImagePath { get; set; }

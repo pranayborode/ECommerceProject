@@ -37,6 +37,8 @@ body {
 }
 
 /*Product- Index */
+
+/*Create Product Toggel button*/
 .available {
     color: green;
 }
@@ -46,8 +48,5 @@ body {
 }
 
 
-/*Create Product Toggel button*/
 
-. custom-switch{
-    
-}
+
