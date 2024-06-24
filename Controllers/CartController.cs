@@ -13,14 +13,14 @@ namespace ECommerceProject.Controllers
 
 		private readonly ICartService _cartService;
 		private readonly IProductService _productService;
-
-        public CartController(ICartService _cartService, IProductService _productService)
+        public CartController(
+			ICartService _cartService, 
+			IProductService _productService)
         {
             this._cartService = _cartService;
 			this._productService = _productService;
         }
 
-        // GET: CartController
         public ActionResult Index()
 		{
 			var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
@@ -36,7 +36,7 @@ namespace ECommerceProject.Controllers
 		[ValidateAntiForgeryToken]
 		public IActionResult AddToCart(int productId, int quantity, string size = null)
 		{
-			
+		
 			try
 			{
 				var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
@@ -122,6 +122,9 @@ namespace ECommerceProject.Controllers
 				return BadRequest("Error updating quantity: " + ex.Message);
 			}
 		}
+
+
+		// Get: To show Cart Items Count in Navbar - _Logout.cshtml
 		[Authorize(Roles = "Customer")]
 		public JsonResult GetCartItemCount()
 		{

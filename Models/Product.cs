@@ -29,7 +29,6 @@ namespace ECommerceProject.Models
 
         [Range(0, 100)]
         public int OfferPercentage { get; set; } 
-
          
         // Foreign key properties
         public int MainCategoryId { get; set; }

@@ -1,18 +1,16 @@
 ﻿using System;
-using System.Linq;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Identity;
 using System.Security.Claims;
-using System.Collections.Generic;
 using ECommerceProject.Data;
 using ECommerceProject.Models;
 using ECommerceProject.Services;
 using ECommerceProject.ViewModels;
 using Razorpay.Api;
 using ECommerceProject.Helper;
-using Org.BouncyCastle.Asn1.X509;
 
+// PendingWork : PlaceOrder- Address, Razorpay 
 
 namespace ECommerceProject.Controllers
 {
@@ -25,27 +23,29 @@ namespace ECommerceProject.Controllers
 		private readonly IAddressService _addressService;
 		private readonly IOrderService _orderService;
 		private readonly IProductService _productService;
+		private readonly IPromoCodeService _promoCodeService;
 		private readonly UserManager<IdentityUser> _userManager;
 		private readonly ApplicationDbContext _context;
 		public OrderController(
 			ICartService cartService,
 			IAddressService addressService,
 			IOrderService orderService,
-			UserManager<IdentityUser> userManager,
 			IProductService productService,
+			IPromoCodeService promoCodeService,
+			UserManager<IdentityUser> userManager,
 			ApplicationDbContext context)
 		{
 			_cartService = cartService;
 			_addressService = addressService;
 			_orderService = orderService;
-			_userManager = userManager;
 			_productService = productService;
+			_promoCodeService = promoCodeService;
+			_userManager = userManager;
 			_context = context;
-
 		}
 
-		//===============Admin Side===================
-		//----OrderList, 
+		//--------------Admin Side-----------------
+		//----OrderList, Edit, OrderDetails, OrderDetails, Invoice
 
 		[Authorize(Roles = "Admin")]
 		public IActionResult OrdersList()
@@ -54,7 +54,8 @@ namespace ECommerceProject.Controllers
 			return View(order);
 		}
 
-		[Authorize(Roles = "Admin")]
+
+        [Authorize(Roles = "Admin")]
 		public ActionResult Edit(int id)
 		{
 			var order = _orderService.GetOrderById(id);
@@ -69,15 +70,20 @@ namespace ECommerceProject.Controllers
 				PaymentStatuses = Enum.GetValues(typeof(PaymentStatus)).Cast<PaymentStatus>().ToList(),
 				OrderStatuses = Enum.GetValues(typeof(OrderStatus)).Cast<OrderStatus>().ToList()
 			};
+
 			return View("UpdateOrder", viewModel);
 		}
 
+
+		[Authorize(Roles = "Admin")]
 		[HttpPost]
 		[ValidateAntiForgeryToken]
 		public async Task<ActionResult> Edit(OrderEditViewModel viewModel)
 		{
+
 			var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
 			var _order = _orderService.GetOrderById(viewModel.Order.OrderId);
+
 			try
 			{
 				var order = new Models.Order
@@ -95,10 +101,13 @@ namespace ECommerceProject.Controllers
 					PaymentStatus = viewModel.Order.PaymentStatus,
 					OrderDate = viewModel.Order.OrderDate,
 					UpdatedDate = DateTime.Now,
+					DeliveryDate = viewModel.Order.DeliveryDate,
+					DeliveryMessage = viewModel.Order.DeliveryMessage
 					//OrderItems = _order.OrderItems.ToList()
-
 				};
+
 				int result = _orderService.EditOrder(order);
+
 				if (result >= 1)
 				{
 					return RedirectToAction(nameof(Edit));
@@ -112,6 +121,7 @@ namespace ECommerceProject.Controllers
 						PaymentStatuses = Enum.GetValues(typeof(PaymentStatus)).Cast<PaymentStatus>().ToList(),
 						OrderStatuses = Enum.GetValues(typeof(OrderStatus)).Cast<OrderStatus>().ToList()
 					};
+
 					ViewBag.ErrorMsg = "Something went wrong...";
 					return View("UpdateOrder", _viewModel);
 				}
@@ -122,8 +132,9 @@ namespace ECommerceProject.Controllers
 				return View();
 			}	
 		}
+		
 
-
+		[Authorize(Roles = "Customer, Admin")]
 		public ActionResult OrderDetails(int id)
 		{
 			var order = _orderService.GetOrderById(id);
@@ -139,9 +150,12 @@ namespace ECommerceProject.Controllers
 				PaymentStatuses = Enum.GetValues(typeof(PaymentStatus)).Cast<PaymentStatus>().ToList(),
 				OrderStatuses = Enum.GetValues(typeof(OrderStatus)).Cast<OrderStatus>().ToList()
 			};
-			return View("OrderDetails", viewModel);
-			
+
+			return View("OrderDetails", viewModel);	
 		}
+
+
+		[Authorize(Roles = "Customer, Admin")]
 		public ActionResult Invoice(int id)
 		{
 			var order = _orderService.GetOrderById(id);
@@ -150,6 +164,7 @@ namespace ECommerceProject.Controllers
 			{
 				return NotFound();
 			}
+
 			var viewModel = new OrderEditViewModel
 			{
 				Order = order,
@@ -157,19 +172,29 @@ namespace ECommerceProject.Controllers
 				PaymentStatuses = Enum.GetValues(typeof(PaymentStatus)).Cast<PaymentStatus>().ToList(),
 				OrderStatuses = Enum.GetValues(typeof(OrderStatus)).Cast<OrderStatus>().ToList()
 			};
-			return View("InvoiceDetails", viewModel);
 
+			return View("InvoiceDetails", viewModel);
 		}
 
 
+		[Authorize(Roles = "Admin")]
 		public async Task<IActionResult> Delete(int id)
 		{
 			var model = _orderService.DeleteOrder(id);
 			return View(model);
 		}
 
-		//================Client Side==================
-		//------Checkout, SelectAddress , PlaceOrder , Payment , Success
+		//-----------------Client Side-------------------
+		//------HomeOrders, Checkout, SelectAddress , PlaceOrder , Payment , Success
+
+		[Authorize(Roles = "Customer")]
+		public IActionResult HomeOrders()
+		{
+			var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+			var order = _orderService.GetOrdersByUserId(userId);
+
+			return View(order);
+		}
 
 
 		[Authorize(Roles = "Customer")]
@@ -178,15 +203,17 @@ namespace ECommerceProject.Controllers
 			var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
 			var cart = _cartService.GetCartByUserId(userId);
 			var addresses = _addressService.GetAddressesByUserId(userId);
+
 			var viewModel = new CheckoutViewModel
 			{
 				CartItems = cart.CartItems,
 				TotalAmount = cart.TotalAmount,
 				Addresses = addresses
-
 			};
+
 			return View(viewModel);
 		}
+
 
 		[Authorize(Roles = "Customer")]
 		[HttpPost]
@@ -196,6 +223,7 @@ namespace ECommerceProject.Controllers
 			var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
 			var cart = _cartService.GetCartByUserId(userId);
 			var addresses = _addressService.GetAddressesByUserId(userId);
+
 			var viewModel = new CheckoutViewModel
 			{
 				SelectedAddressId = selectedAddressId,
@@ -204,12 +232,14 @@ namespace ECommerceProject.Controllers
 				TotalAmount = cart.TotalAmount,
 				Addresses = addresses
 			};
+
 			return View("Checkout", viewModel);
 		}
 
+
 		[Authorize(Roles = "Customer")]
 		[HttpPost]
-		public IActionResult PlaceOrder(CheckoutViewModel model)
+		public IActionResult PlaceOrder(CheckoutViewModel model, string promoCode = null)
 		{
 			var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
 			var user = _userManager.FindByIdAsync(userId);
@@ -217,13 +247,42 @@ namespace ECommerceProject.Controllers
 			var cart = _cartService.GetCartByUserId(userId);
 			var selectedAddress = _addressService.GetAddressById(model.SelectedAddressId);
 			var selectedAddressId = model.SelectedAddressId;
+
 			if (selectedAddress == null)
 			{
-				// Handle case where the selected address does not exist
+				// Code Remaining to Handle case where the selected address does not exist
 				ModelState.AddModelError("", "Selected address is invalid.");
 				return View("Checkout", model);
 			}
-			var amount = (int)(cart.TotalAmount * 100);
+
+
+			var amount = cart.TotalAmount;
+
+			if (cart.TotalAmount < 499)
+			{
+				 amount += 40;
+			}
+			
+
+			if (!string.IsNullOrEmpty(promoCode))
+			{
+				try
+				{
+					var discountAmount = _promoCodeService.ApplyPromoCode(promoCode, amount);
+					amount -= discountAmount;
+					ViewBag.DiscountAmount = discountAmount;
+				}
+				catch(Exception ex)
+				{
+					ModelState.AddModelError("", ex.Message);
+					return View("Checkout", model);
+
+				}
+			}
+
+			var finalAmount = (int)(amount * 100);
+
+			//To Genereate ReceiptId
 			Random _random = new Random();
 			int randomNumber = _random.Next(10000, 99999);
 			string ReceiptId = $"REC-{DateTime.UtcNow:MMddHHmmss}-{randomNumber}";
@@ -231,13 +290,13 @@ namespace ECommerceProject.Controllers
 
 			if (model.SelectedPaymentMethod == "Razorpay")
 			{
+
+				// Need to store in Database 
 				string key = "rzp_test_fJEgCGszLGlH7X";
 				string secret = "EtvpucYs5NFNCGsw9zXxeD0q";
 
-
-
 				Dictionary<string, object> input = new Dictionary<string, object>();
-				input.Add("amount", amount);
+				input.Add("amount", finalAmount);
 				input.Add("currency", "INR");
 				input.Add("receipt", ReceiptId);
 
@@ -247,7 +306,7 @@ namespace ECommerceProject.Controllers
 
 				var paymentViewModel = new PaymentViewModel
 				{
-					Amount = amount,
+					Amount = finalAmount,
 					OrderId = orderId,
 					CompanyName = "COZA STORE",
 					CompanyLogo = "https://themewagon.github.io/cozastore/images/icons/logo-01.png",
@@ -264,15 +323,17 @@ namespace ECommerceProject.Controllers
 			}
 			else if (model.SelectedPaymentMethod == "COD")
 			{
+
 				var order = new Models.Order
 				{
 					UserId = userId,
 					AddressId = model.SelectedAddressId,
-					TotalAmount = cart.TotalAmount,
+					TotalAmount = amount,
 					ReceiptId = ReceiptId,
 					PaymentMethod = model.SelectedPaymentMethod,
-					OrderStatus = OrderStatus.Confirmed,
+					OrderStatus = OrderStatus.Pending,
 					OrderDate = DateTime.Now,
+
 					OrderItems = cart.CartItems.Select(item => new OrderItem
 					{
 						ProductId = item.ProductId,
@@ -281,14 +342,16 @@ namespace ECommerceProject.Controllers
 						DiscountedPrice = item.DiscountedPrice,
 						Size = item.Size
 					}).ToList()
+
 				};
 
 				_orderService.AddOrder(order);
 
-				// Update product stock
+				// To Update product Stock
 				foreach (var item in order.OrderItems)
 				{
 					var product = _productService.GetProductById(item.ProductId);
+
 					if (product != null)
 					{
 						product.Stock -= item.Quantity;
@@ -309,15 +372,18 @@ namespace ECommerceProject.Controllers
 			}
 		}
 
+
 		[Authorize(Roles = "Customer")]
 		public IActionResult Payment(string razorpay_payment_id, string razorpay_order_id,
 			string razorpay_signature, int addressId, string paymentMethod)
 		{
+
 			var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
 			var cart = _cartService.GetCartByUserId(userId);
 
 			string key = "rzp_test_fJEgCGszLGlH7X";
 			string secret = "EtvpucYs5NFNCGsw9zXxeD0q";
+
 			try
 			{
 				RazorpayClient client = new RazorpayClient(key, secret);
@@ -327,8 +393,11 @@ namespace ECommerceProject.Controllers
 				attributes.Add("razorpay_order_id", Request.Form["razorpay_order_id"]);
 				attributes.Add("razorpay_signature", Request.Form["razorpay_signature"]);
 
+				//Check Payment verification 
 				Utils.verifyPaymentSignature(attributes);
+
 				string receiptId = Request.Form["receipt"];
+
 				var order = new Models.Order
 				{
 					UserId = userId,
@@ -336,12 +405,13 @@ namespace ECommerceProject.Controllers
 					TotalAmount = cart.TotalAmount,
 					PaymentMethod = paymentMethod,
 					ReceiptId = receiptId,
-					OrderStatus = OrderStatus.Confirmed,
+					OrderStatus = OrderStatus.Pending,
 					PaymentStatus = PaymentStatus.Paid,
 					OrderDate = DateTime.Now,
 					RazorpayPaymentId = razorpay_payment_id,
 					RazorpayOrderId = razorpay_order_id,
 					RazorpaySignature = razorpay_signature,
+
 					OrderItems = cart.CartItems.Select(item => new OrderItem
 					{
 						ProductId = item.ProductId,
@@ -350,14 +420,16 @@ namespace ECommerceProject.Controllers
 						DiscountedPrice = item.DiscountedPrice,
 						Size = item.Size
 					}).ToList()
+
 				};
 
 				_orderService.AddOrder(order);
 
-				// Update product stock
+				// To Update product stock
 				foreach (var item in order.OrderItems)
 				{
 					var product = _productService.GetProductById(item.ProductId);
+
 					if (product != null)
 					{
 						product.Stock -= item.Quantity;
@@ -379,7 +451,6 @@ namespace ECommerceProject.Controllers
 				ViewBag.ErrorMessage = ex.Message;
 				return View("Error");
 			};
-
 		}
 
 
@@ -390,6 +461,7 @@ namespace ECommerceProject.Controllers
 			var order = _orderService.GetOrderById(id);
 			return View(order);
 		}
+
 
 		// Error action to display payment error message
 		public IActionResult Error()

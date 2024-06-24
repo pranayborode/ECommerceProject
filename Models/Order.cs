@@ -45,5 +45,7 @@ namespace ECommerceProject.Models
         public virtual Address Address { get; set; }
         public virtual ICollection<OrderItem> OrderItems { get; set; }
 
-    }
+		public DateTime? DeliveryDate { get; set; }
+		public string? DeliveryMessage { get; set; }
+	}
 }

@@ -22,8 +22,11 @@ namespace ECommerceProject.Data
         public DbSet<Order> Orders { get; set; }
         public DbSet<OrderItem> OrderItems { get; set; }
         public DbSet<PaymentMethod> PaymentMethods { get; set; }
+		public DbSet<PromoCode> PromoCodes { get; set; }
 
-        protected override void OnModelCreating(ModelBuilder modelBuilder)
+		
+
+		protected override void OnModelCreating(ModelBuilder modelBuilder)
 		{
 			base.OnModelCreating(modelBuilder);
 

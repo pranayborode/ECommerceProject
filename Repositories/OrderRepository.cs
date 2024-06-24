@@ -35,21 +35,21 @@ namespace ECommerceProject.Repositories
 
         public int EditOrder(Order order)
         {
-			var existingOrder = _context.Orders.Find(order.OrderId);
+            var existingOrder = _context.Orders.Find(order.OrderId);
 
-			if (existingOrder == null)
-			{
-				return 0; // Return 0 or handle accordingly if order not found
-			}
+            if (existingOrder == null)
+            {
+                return 0; // Return 0 or handle accordingly if order not found
+            }
 
-			// Update only the properties that are modified
-			_context.Entry(existingOrder).CurrentValues.SetValues(order);
+            // Update only the properties that are modified
+            _context.Entry(existingOrder).CurrentValues.SetValues(order);
 
-			// Ensure related entities are not modified unintentionally
-			_context.Entry(existingOrder).Collection(o => o.OrderItems).IsModified = false; // Assuming OrderItems should not be updated here
+            // Ensure related entities are not modified unintentionally
+            _context.Entry(existingOrder).Collection(o => o.OrderItems).IsModified = false; // Assuming OrderItems should not be updated here
 
-			return _context.SaveChanges();
-			/*var _order = _context.Orders.Find(order.OrderId);
+            return _context.SaveChanges();
+            /*var _order = _context.Orders.Find(order.OrderId);
             if (order != null)
             {
                 _context.Orders.Update(order);
@@ -60,14 +60,14 @@ namespace ECommerceProject.Repositories
                 return 0;
             }*/
 
-		}
+        }
 
         public Order GetOrderById(int id)
         {
             var order = _context.Orders
         .Include(o => o.OrderItems)
-        .ThenInclude(oi => oi.Product)  // Include product details for each order item
-        .Include(o => o.Address)  // Include address details
+        .ThenInclude(oi => oi.Product)
+        .Include(o => o.Address)
         .FirstOrDefault(o => o.OrderId == id);
 
             return order;
@@ -77,26 +77,35 @@ namespace ECommerceProject.Repositories
         {
             return _context.Orders.ToList();
         }
-		public IEnumerable<Order> GetOrdersDesByDate()
-		{
-           
-			return _context.Orders
-                .OrderByDescending(o=>o.OrderDate)
-                .Include(o=>o.Address)
-                .Include(o=>o.OrderItems)
+        public IEnumerable<Order> GetOrdersDesByDate()
+        {
+
+            return _context.Orders
+                .OrderByDescending(o => o.OrderDate)
+                .Include(o => o.Address)
+                .Include(o => o.OrderItems)
                 .ToList();
-		}
+        }
 
-		public int GetPendingOrderCount()
-		{
-			var pendingOrders = _context.Orders
-								.Where(o => o.OrderStatus == OrderStatus.Confirmed)
-								.ToList(); // Convert to list to force execution and inspect in debugger
+        public int GetPendingOrderCount()
+        {
+            var pendingOrders = _context.Orders
+                                .Where(o => o.OrderStatus == OrderStatus.Confirmed)
+                                .ToList();
 
-			// Log or debug pendingOrders to check if it retrieves the correct orders
+            return pendingOrders.Count;
+        }
 
-			return pendingOrders.Count;
-		}
-       
-	}
+        public IEnumerable<Order> GetOrdersByUserId(string userId)
+        {
+            return _context.Orders
+                .Where(o => o.UserId == userId)
+                .Include(o => o.OrderItems)
+                .ThenInclude(oi => oi.Product)
+                .Include(o => o.Address)
+                .OrderByDescending(o => o.OrderDate)
+                .ToList();
+        }
+
+    }
 }

@@ -1,17 +1,11 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
-using Microsoft.EntityFrameworkCore;
 using ECommerceProject.Data;
 using ECommerceProject.Models;
 using ECommerceProject.ViewModels;
-using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Authorization;
 using ECommerceProject.Services;
-using System.Drawing.Drawing2D;
+
 
 namespace ECommerceProject.Controllers
 {
@@ -33,29 +27,24 @@ namespace ECommerceProject.Controllers
 
         }
 
-        // GET: Brands
         public ActionResult Index()
         {
             var model = service.GetBrands();
             return View(model);
         }
 
-        // GET: Brands/Details/5
         public ActionResult Details(int id)
         {
             var model = service.GetBrandById(id);
             return View(model);
         }
 
-        // GET: Brands/Create
         public ActionResult Create()
         {
             return View();
         }
 
-        // POST: Brands/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
+    
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult Create(BrandViewModel brandViewModel, IFormFile file)
@@ -87,22 +76,16 @@ namespace ECommerceProject.Controllers
                     ViewBag.ErrorMsg = "Something went wrong...";
                     return View();
                 }
-
-
             }
             catch (Exception ex)
             {
                 ViewBag.ErrorMessage = ex.Message;
                 return View();
             }
-
         }
 
-        // GET: Brands/Edit/5
         public async Task<IActionResult> Edit(int id)
         {
-
-
             var brand = service.GetBrandById(id);
             HttpContext.Session.SetString("oldImageUrl", brand.Image);
             if (brand == null)
@@ -118,16 +101,13 @@ namespace ECommerceProject.Controllers
             return View(viewModel);
         }
 
-        // POST: Brands/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
+
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(BrandViewModel brandViewModel, IFormFile file)
         {
             try
             {
-
                 string oldImageUrl = HttpContext.Session.GetString("oldImageUrl");
 
                 if (file != null)
@@ -136,13 +116,13 @@ namespace ECommerceProject.Controllers
                     {
                         file.CopyTo(fs);
                     }
+
                     brandViewModel.ImagePath = "~/uploads/brand/" + file.FileName;
 
                     string[] str = oldImageUrl.Split("/");
                     string str1 = (str[str.Length - 1]);
                     string path = _iHostEnv.WebRootPath + "\\uploads/brand\\" + str1;
                     System.IO.File.Delete(path);
-
                 }
                 else
                 {
@@ -176,17 +156,14 @@ namespace ECommerceProject.Controllers
 
         }
 
-        // GET: Brands/Delete/5
         public async Task<IActionResult> Delete(int id)
         {
             var model = service.GetBrandById(id);
             HttpContext.Session.SetString("oldImageUrl", model.Image);
             return View(model);
 
-
         }
 
-        // POST: Brands/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
@@ -199,8 +176,6 @@ namespace ECommerceProject.Controllers
                 {
                     return NotFound();
                 }
-
-               
 
                 var result = service.DeleteBrand(id);
 

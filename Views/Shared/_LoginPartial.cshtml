@@ -3,24 +3,99 @@
 @inject UserManager<IdentityUser> UserManager
 
 <ul class="navbar-nav">
-@if (SignInManager.IsSignedIn(User))
-{
-    <li class="nav-item">
-        <a  class="nav-link " asp-area="Identity" asp-page="/Account/Manage/Index" title="Manage">@User.Identity?.Name</a>
-    </li>
-    <li class="nav-item">
-        <form  class="form-inline" asp-area="Identity" asp-page="/Account/Logout" asp-route-returnUrl="@Url.Action("Index", "Home", new { area = "" })">
-            <button  type="submit" class="nav-link btn btn-link ">Logout</button>
-        </form>
-    </li>
-}
-else
-{
-    <li class="nav-item">
-        <a class="nav-link " asp-area="Identity" asp-page="/Account/Register">Register</a>
-    </li>
-    <li class="nav-item">
-        <a class="nav-link " asp-area="Identity" asp-page="/Account/Login">Login</a>
-    </li>
-}
+    @if (SignInManager.IsSignedIn(User))
+    {
+        <li class="dropdown nav-item">
+            <a class="nav-link dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">@User.Identity?.Name <span class="caret"></span></a>
+            <ul class="dropdown-menu">
+                <li><a class="dropdown-item" asp-area="Identity" asp-page="/Account/Manage/Index">My Profile</a></li>
+                <li role="separator" class="dropdown-divider"></li>
+                <li><a class="dropdown-item" asp-action="HomeOrders" asp-controller="Order">Orders</a></li>
+                <li><a class="dropdown-item" href="#">Wishlist</a></li>
+                <li><a class="dropdown-item" href="#">Coupons</a></li>
+                <li><a class="dropdown-item" href="#">Notifications</a></li>
+            </ul>
+        </li>
+        <li class="nav-item">
+            <form class="form-inline" asp-area="Identity" asp-page="/Account/Logout" asp-route-returnUrl="@Url.Action("Index", "Home", new { area = "" })">
+                <button type="submit" class="nav-link btn btn-dark">Logout</button>
+            </form>
+        </li>
+    }
+    else
+    {
+        <li class="nav-item">
+            <a class="nav-link" asp-area="Identity" asp-page="/Account/Register">Register</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" asp-area="Identity" asp-page="/Account/Login">Login</a>
+        </li>
+    }
 </ul>
+
+<style>
+    @@media only screen and (min-width: 768px) {
+        .dropdown:hover .dropdown-menu {
+            display: block;
+        }
+    }
+
+    .navbar-nav .nav-link {
+        color: #000; /* Changed text color to black */
+        transition: color 0.2s;
+    }
+
+        .navbar-nav .nav-link:hover, .navbar-nav .dropdown-toggle:hover {
+            color: #333; /* Slightly darker on hover */
+        }
+
+    .dropdown-menu {
+        background-color: #f8f9fa; /* Light background for better contrast with black text */
+        border: none;
+        border-radius: 0;
+        box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+    }
+
+        .dropdown-menu .dropdown-item {
+            color: #000; /* Changed text color to black */
+            transition: background-color 0.2s, color 0.2s;
+        }
+
+            .dropdown-menu .dropdown-item:hover {
+                background-color: #e2e6ea; /* Light grey background on hover */
+                color: #000; /* Keep text color black on hover */
+            }
+
+    .dropdown-divider {
+        border-top: 1px solid #e2e6ea;
+    }
+
+    .nav-item form .nav-link.btn-link {
+        color: #000; /* Changed text color to black */
+        text-decoration: none;
+    }
+
+        .nav-item form .nav-link.btn-link:hover {
+            color: #333; /* Slightly darker on hover */
+        }
+</style>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const dropdownToggles = document.querySelectorAll('.dropdown-toggle');
+
+        dropdownToggles.forEach(toggle => {
+            toggle.addEventListener('click', function (e) {
+                if (window.innerWidth > 768) {
+                    e.preventDefault();
+
+                    const url = this.getAttribute('href');
+
+                    if (url !== '#') {
+                        window.location.href = url;
+                    }
+                }
+            });
+        });
+    });
+</script>

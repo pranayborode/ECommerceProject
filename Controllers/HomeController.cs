@@ -18,7 +18,6 @@ namespace ECommerceProject.Controllers
 		private readonly ApplicationDbContext _context;
 		private readonly IProductService _productService;
 		private readonly IOrderService _orderService;
-
 		public HomeController(
 			ILogger<HomeController> logger,
             UserManager<IdentityUser> userManager,
@@ -32,16 +31,16 @@ namespace ECommerceProject.Controllers
 			_productService = productService;
 			_orderService = orderService;
 		}
+
+
         [AllowAnonymous]
         public IActionResult Index()
 		{
-			 // Fetch products from ProductService
+	
             IEnumerable<Product> products = _productService.GetProducts();
-            
-            // Check if the products list is null
+           
             if (products == null)
             {
-                // Log an error or handle the null case appropriately
                 products = new List<Product>();
             }
 
@@ -53,6 +52,7 @@ namespace ECommerceProject.Controllers
             var model = _productService.GetProducts();
             return PartialView("_UserPage", model);
         }
+
         public ActionResult QuickView(int id)
         {
             var product = _productService.GetProductById(id);
@@ -80,19 +80,22 @@ namespace ECommerceProject.Controllers
             var userCount = await _userManager.Users.CountAsync();
 			var productCount = await _context.Products.CountAsync();
             var soldOutCount = _productService.GetSoldOutProductsCount();
-			var newOrders = _orderService.GetPendingOrderCount();
-				
+			var newOrders = _orderService.GetPendingOrderCount();		
 
 			ViewBag.UserCount = userCount;
 			ViewBag.ProductCount = productCount;
 			ViewBag.SoldOutCount = soldOutCount;
 			ViewBag.NewOrders = newOrders;
+
 			return View();
 		}
+
+
 		public IActionResult Privacy()
 		{
 			return View();
 		}
+
 
 		[ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
 		public IActionResult Error()

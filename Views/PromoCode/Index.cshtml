@@ -1,0 +1,95 @@
+﻿@model IEnumerable<ECommerceProject.Models.PromoCode>
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+<h1>Index</h1>
+
+<p>
+    <a asp-action="Create">Create New</a>
+</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.CodeName)
+            </th>
+           @*  <th>
+                @Html.DisplayNameFor(model => model.Messsage)
+            </th> *@
+            <th>
+                @Html.DisplayNameFor(model => model.StartDate)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.EndDate)
+            </th>
+          @*   <th>
+                @Html.DisplayNameFor(model => model.NoOfUsers)
+            </th> *@
+            <th>
+                @Html.DisplayNameFor(model => model.MinimumOrderAmount)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Discount)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.DiscountType)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.MaxDiscountAmount)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.RepeatUsage)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.PromoCodeStatus)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.CodeName)
+            </td>
+           @*  <td>
+                @Html.DisplayFor(modelItem => item.Messsage)
+            </td> *@
+            <td>
+                @Html.DisplayFor(modelItem => item.StartDate)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.EndDate)
+            </td>
+            @* <td>
+                @Html.DisplayFor(modelItem => item.NoOfUsers)
+            </td> *@
+            <td>
+                @Html.DisplayFor(modelItem => item.MinimumOrderAmount)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Discount)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.DiscountType)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.MaxDiscountAmount)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.RepeatUsage)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.PromoCodeStatus)
+            </td>
+            <td>
+                <a asp-action="Edit" asp-route-id="@item.PromoCodeId">Edit</a> |
+                @* <a asp-action="Details" asp-route-id="@item.PromoCodeId">Details</a> | *@
+                <a asp-action="Delete" asp-route-id="@item.PromoCodeId">Delete</a>
+            </td>
+        </tr>
+}
+    </tbody>
+</table>

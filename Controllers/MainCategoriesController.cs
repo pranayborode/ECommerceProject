@@ -23,27 +23,27 @@ namespace ECommerceProject.Controllers
 			this._iHostEnv = _iHostEnv;
         }
 
-        // GET: MainCategoriesController
+    
         public ActionResult Index()
 		{
 			var model = service.GetMainCategories();
 			return View(model);
 		}
 
-		// GET: MainCategoriesController/Details/5
+	
 		public ActionResult Details(int id)
 		{
 			var model = service.GetMainCategoryById(id);
 			return View(model);
 		}
 
-		// GET: MainCategoriesController/Create
+		
 		public ActionResult Create()
 		{
 			return View();
 		}
 
-		// POST: MainCategoriesController/Create
+		
 		[HttpPost]
 		[ValidateAntiForgeryToken]
 		public async Task<IActionResult> Create(MainCategoryViewModel mCat, IFormFile file)
@@ -83,7 +83,7 @@ namespace ECommerceProject.Controllers
 			}
 		}
 
-        // GET: MainCategoriesController/Edit/5
+       
         public async Task<IActionResult> Edit(int id)
 		{
             var mCat = service.GetMainCategoryById(id);
@@ -106,7 +106,7 @@ namespace ECommerceProject.Controllers
    
 		}
 
-		// POST: MainCategoriesController/Edit/5
+		
 		[HttpPost]
 		[ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(MainCategoryViewModel mCat,IFormFile file)
@@ -121,6 +121,7 @@ namespace ECommerceProject.Controllers
                     {
                         file.CopyTo(fs);
                     }
+
                     mCat.ImagePath = "~/uploads/category/" + file.FileName;
 
                     string[] str = oldimageurl.Split("/");
@@ -143,6 +144,7 @@ namespace ECommerceProject.Controllers
                 };
 
                 int result = service.EditMainCategory(mainCategory);
+
                 if (result >= 1)
                 {
                     return RedirectToAction(nameof(Index));
@@ -160,15 +162,16 @@ namespace ECommerceProject.Controllers
             }
         }
 
-		// GET: MainCategoriesController/Delete/5
+
 		public ActionResult Delete(int id)
 		{
 			var mCat = service.GetMainCategoryById(id);
             HttpContext.Session.SetString("oldImageUrl", mCat.Image);
+
             return View(mCat);
 		}
 
-		// POST: MainCategoriesController/Delete/5
+		
 		[HttpPost]
 		[ValidateAntiForgeryToken]
 		public ActionResult Delete(int id, IFormCollection collection)
@@ -184,6 +187,7 @@ namespace ECommerceProject.Controllers
                     string str1 = (str[str.Length - 1]);
                     string path = _iHostEnv.WebRootPath + "\\uploads/category\\" + str1;
                     System.IO.File.Delete(path);
+
                     return RedirectToAction(nameof(Index));
 				}
 				else

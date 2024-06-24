@@ -1,0 +1,73 @@
+﻿@model IEnumerable<ECommerceProject.Models.Order>
+
+@{
+	ViewData["Title"] = "HomeOrders";
+}
+
+
+<div class="container mb-4">
+	<div class="row d-flex justify-content-center align-items-center">
+		<div class="col col-xl-10">
+			<div class="page-title-box">
+				<h3 class="mt-4">Your Orders</h3>
+			</div>
+			@foreach (var order in Model)
+			{
+				<div class="card mb-2 shadow-sm" style="border: 1px #d5d9d9 solid">
+					<div class="card-header pb-0" style="background-color: #f0f2f2; border: 1px #d5d9d9 solid">
+						<div class="d-flex justify-content-between mb-2" >
+							<div>
+								<span><strong>ORDER DATE:</strong> @Html.DisplayFor(modelItem => order.OrderDate)</span><br />
+								<span><strong>TOTAL:</strong> @Html.DisplayFor(modelItem => order.TotalAmount)</span>
+							</div>
+							<div>
+								<span><strong>ORDER #:</strong> @order.OrderId</span><br />
+								<a asp-action="OrderDetails" asp-route-id="@order.OrderId">View order details</a> |
+								<a asp-action="Invoice" asp-route-id="@order.OrderId">Invoice</a>
+							</div>
+						</div>
+					</div>
+					<div class="card-body">
+						<div class="row">
+							<div class="col-lg-12">
+								<div class="row">
+									<div class="col-lg-8">
+										@* <h5 class="card-title">Delivered @Html.DisplayFor(modelItem => order.DeliveryDate)</h5> *@
+
+										@foreach (var item in order.OrderItems)
+										{
+											<div class="d-flex mb-3">
+												<img src="@Url.Content(item.Product.Image)" class="img-thumbnail" alt="@item.Product.Name" style="width: 80px;">
+												<div class="ms-3">
+													<div class="mb-2">
+														<span class="mb-1" style="color:darkcyan">@item.Product.Name</span><br />
+														<span class="mb-1">Quantity: @item.Quantity</span>&nbsp;&nbsp;
+														<span class="mb-1">Amount: @item.Subtotal</span><br />
+													</div>
+
+													<a href="#" class="btn btn-dark btn-sm">Buy it again</a>
+													<a href="#" class="btn btn-outline-dark btn-sm">View your item</a>
+												</div>
+											</div>
+										}
+									</div>
+									<div class="col-lg-4">
+
+										<div class="d-flex flex-column">
+											<a href="#" class="btn btn-outline-dark mb-2 btn-sm">Track package</a>
+											<a href="#" class="btn btn-outline-dark mb-2 btn-sm">Return items</a>
+											<a href="#" class="btn btn-outline-dark mb-2 btn-sm">Leave delivery feedback</a>
+											<a href="#" class="btn btn-outline-dark mb-2 btn-sm">Write a product review</a>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+
+
+					</div>
+				</div>
+			}
+		</div>
+	</div>
+</div>

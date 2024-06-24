@@ -3,10 +3,18 @@ using ECommerceProject.Repositories;
 using ECommerceProject.Services;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-
+using Microsoft.AspNetCore.Authentication.Google;
+using Microsoft.AspNetCore.Authentication.Cookies;
 var builder = WebApplication.CreateBuilder(args);
 
 
+// Google Login -------------------------------------
+var configuration = builder.Configuration;
+builder.Services.AddAuthentication().AddGoogle(googleOptions =>
+{
+    googleOptions.ClientId = configuration["GoogleKeys:ClientId"];
+    googleOptions.ClientSecret = configuration["GoogleKeys:ClientSecret"];
+});
 //configuration of session------------------------------------------------- 1
 builder.Services.AddSession(options =>
 {
@@ -55,7 +63,8 @@ builder.Services.AddScoped<IAddressRepository, AddressRepository>();
 builder.Services.AddScoped<IAddressService, AddressService>();
 builder.Services.AddScoped<IOrderRepository, OrderRepository>();
 builder.Services.AddScoped<IOrderService, OrderService>();
-
+builder.Services.AddScoped<IPromoCodeRepository, PromoCodeRepository>();
+builder.Services.AddScoped<IPromoCodeService, PromoCodeService>();
 
 
 

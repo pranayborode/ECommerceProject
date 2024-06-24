@@ -1,7 +1,97 @@
 ﻿@page
 @model LoginModel
 
-@{
+<section class="pb-4 pt-4" style="height:100%">
+	<div class="container py-4 h-70">
+		<div class="row d-flex justify-content-center align-items-center h-80">
+			<div class="col col-xl-10">
+				<div class="card" style="border-radius: 1rem;">
+					<div class="row g-0">
+						<div class="col-md-6 col-lg-5 d-none d-md-block">
+							<img src="https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-login-form/img1.webp"
+								 alt="login form" class="img-fluid" style="border-radius: 1rem 0 0 1rem;" />
+						</div>
+						<div class="col-md-5 col-lg-7 d-flex align-items-center">
+							<div class="card-body p-4 p-lg-5 pt-lg-3 pb-lg-3 text-black">
+
+
+								<div class="d-flex align-items-center mb-2 pb-1">
+									<i class="fas fa-cubes fa-2x me-3" style="color: #ff6219;"></i>
+									<span class="h1 fw-bold mb-0">COZA STORE</span>
+								</div>
+
+								<h5 class="fw-normal mb-1 pb-2" style="letter-spacing: 1px;">Sign into your account</h5>
+
+								<div class="text-center">
+									<form id="external-account" asp-page="./ExternalLogin" asp-route-returnUrl="@Model.ReturnUrl" method="post">
+										<button type="submit" class="btn btn-lg btn-block" name="provider" value="Google" title="Log in using your Google account">
+											<img src="https://developers.google.com/identity/images/btn_google_signin_dark_normal_web.png" alt="Google login" />
+										</button>
+									</form>
+								</div>
+
+								<div class="hr-sect">OR</div>
+
+								<form id="account" method="post">
+									<div asp-validation-summary="ModelOnly" class="text-danger"></div>
+									<div data-mdb-input-init class="form-outline mb-2">
+										<input asp-for="Input.Email" type="email" autocomplete="username" aria-required="true" id="form2Example17" class="form-control form-control-lg" />
+										<label class="form-label" for="form2Example17">Email</label>
+										<span asp-validation-for="Input.Email" class="text-danger"></span>
+									</div>
+
+									<div data-mdb-input-init class="form-outline mb-1">
+										<input asp-for="Input.Password" type="password" autocomplete="current-password" aria-required="true" id="form2Example27" class="form-control form-control-lg" />
+										<label class="form-label" for="form2Example27">Password</label>
+										<span asp-validation-for="Input.Password" class="text-danger"></span>
+									</div>
+
+									<div class="pt-1 mb-2">
+										<button id="login-submit" type="submit" data-mdb-button-init data-mdb-ripple-init class="btn btn-dark btn-lg btn-block">Login</button>
+									</div>
+
+
+									<a class="small text-muted" href="#!">Forgot password?</a>
+									<p class="mb-1 pb-lg-2" style="color: #393f81;">
+										Don't have an account?
+										<a asp-page="./Register" asp-route-returnUrl="@Model.ReturnUrl" style="color: #393f81;">Register here</a>
+									</p>
+									<p>
+										<a id="resend-confirmation" asp-page="./ResendEmailConfirmation">Resend email confirmation</a>
+									</p>
+								</form>
+
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</section>
+
+<style>
+	.hr-sect {
+		display: flex;
+		flex-basis: 100%;
+		align-items: center;
+		color: rgba(0, 0, 0, 0.35);
+		margin: 8px 0px;
+	}
+
+		.hr-sect:before,
+		.hr-sect:after {
+			content: "";
+			flex-grow: 1;
+			background: rgba(0, 0, 0, 0.35);
+			height: 1px;
+			font-size: 0px;
+			line-height: 0px;
+			margin: 0px 8px;
+		}
+</style>
+
+@* @{
     ViewData["Title"] = "Log in";
 }
 
@@ -48,6 +138,7 @@
             </form>
         </section>
     </div>
+
     <div class="col-md-6 col-md-offset-2">
         <section>
             <h3>Use another service to log in.</h3>
@@ -80,6 +171,9 @@
     </div>
 </div>
 
+
+
+ *@
 @section Scripts {
-    <partial name="_ValidationScriptsPartial" />
+	<partial name="_ValidationScriptsPartial" />
 }

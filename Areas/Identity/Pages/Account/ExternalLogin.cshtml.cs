@@ -17,6 +17,9 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.Extensions.Logging;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using Org.BouncyCastle.Asn1.Ocsp;
+using System.Security.Policy;
 
 namespace ECommerceProject.Areas.Identity.Pages.Account
 {
@@ -29,13 +32,15 @@ namespace ECommerceProject.Areas.Identity.Pages.Account
         private readonly IUserEmailStore<IdentityUser> _emailStore;
         private readonly IEmailSender _emailSender;
         private readonly ILogger<ExternalLoginModel> _logger;
+		private readonly RoleManager<IdentityRole> _roleManager;
 
-        public ExternalLoginModel(
+		public ExternalLoginModel(
             SignInManager<IdentityUser> signInManager,
             UserManager<IdentityUser> userManager,
             IUserStore<IdentityUser> userStore,
             ILogger<ExternalLoginModel> logger,
-            IEmailSender emailSender)
+            IEmailSender emailSender,
+			RoleManager<IdentityRole> roleManager)
         {
             _signInManager = signInManager;
             _userManager = userManager;
@@ -43,6 +48,7 @@ namespace ECommerceProject.Areas.Identity.Pages.Account
             _emailStore = GetEmailStore();
             _logger = logger;
             _emailSender = emailSender;
+            _roleManager = roleManager;
         }
 
         /// <summary>
@@ -138,64 +144,68 @@ namespace ECommerceProject.Areas.Identity.Pages.Account
             }
         }
 
-        public async Task<IActionResult> OnPostConfirmationAsync(string returnUrl = null)
-        {
-            returnUrl = returnUrl ?? Url.Content("~/");
-            // Get the information about the user from the external login provider
-            var info = await _signInManager.GetExternalLoginInfoAsync();
-            if (info == null)
-            {
-                ErrorMessage = "Error loading external login information during confirmation.";
-                return RedirectToPage("./Login", new { ReturnUrl = returnUrl });
-            }
+		// Updated for To set a default role when a user registers through Google authentication
+        // Replace when Google Auth service is removed
+		public async Task<IActionResult> OnPostConfirmationAsync(string returnUrl = null)
+		{
+			returnUrl = returnUrl ?? Url.Content("~/");
+			var info = await _signInManager.GetExternalLoginInfoAsync();
+			if (info == null)
+			{
+				ErrorMessage = "Error loading external login information during confirmation.";
+				return RedirectToPage("./Login", new { ReturnUrl = returnUrl });
+			}
 
-            if (ModelState.IsValid)
-            {
-                var user = CreateUser();
+			if (ModelState.IsValid)
+			{
+				var user = new IdentityUser { UserName = Input.Email, Email = Input.Email };
 
-                await _userStore.SetUserNameAsync(user, Input.Email, CancellationToken.None);
-                await _emailStore.SetEmailAsync(user, Input.Email, CancellationToken.None);
+				var result = await _userManager.CreateAsync(user);
+				if (result.Succeeded)
+				{
+					result = await _userManager.AddLoginAsync(user, info);
+					if (result.Succeeded)
+					{
+						_logger.LogInformation("User created an account using {Name} provider.", info.LoginProvider);
 
-                var result = await _userManager.CreateAsync(user);
-                if (result.Succeeded)
-                {
-                    result = await _userManager.AddLoginAsync(user, info);
-                    if (result.Succeeded)
-                    {
-                        _logger.LogInformation("User created an account using {Name} provider.", info.LoginProvider);
+						var defaultrole = _roleManager.FindByNameAsync("Customer").Result;
+						if (defaultrole != null)
+						{
+							IdentityResult roleresult = await _userManager.AddToRoleAsync(user, defaultrole.Name);
+						}
 
-                        var userId = await _userManager.GetUserIdAsync(user);
-                        var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);
-                        code = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(code));
-                        var callbackUrl = Url.Page(
-                            "/Account/ConfirmEmail",
-                            pageHandler: null,
-                            values: new { area = "Identity", userId = userId, code = code },
-                            protocol: Request.Scheme);
+						var userId = await _userManager.GetUserIdAsync(user);
+						var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);
+						code = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(code));
+						var callbackUrl = Url.Page(
+							"/Account/ConfirmEmail",
+							pageHandler: null,
+							values: new { area = "Identity", userId = userId, code = code },
+							protocol: Request.Scheme);
 
-                        await _emailSender.SendEmailAsync(Input.Email, "Confirm your email",
-                            $"Please confirm your account by <a href='{HtmlEncoder.Default.Encode(callbackUrl)}'>clicking here</a>.");
+						await _emailSender.SendEmailAsync(Input.Email, "Confirm your email",
+							$"Please confirm your account by <a href='{HtmlEncoder.Default.Encode(callbackUrl)}'>clicking here</a>.");
 
-                        // If account confirmation is required, we need to show the link if we don't have a real email sender
-                        if (_userManager.Options.SignIn.RequireConfirmedAccount)
-                        {
-                            return RedirectToPage("./RegisterConfirmation", new { Email = Input.Email });
-                        }
+						if (_userManager.Options.SignIn.RequireConfirmedAccount)
+						{
+							return RedirectToPage("./RegisterConfirmation", new { Email = Input.Email });
+						}
 
-                        await _signInManager.SignInAsync(user, isPersistent: false, info.LoginProvider);
-                        return LocalRedirect(returnUrl);
-                    }
-                }
-                foreach (var error in result.Errors)
-                {
-                    ModelState.AddModelError(string.Empty, error.Description);
-                }
-            }
+						await _signInManager.SignInAsync(user, isPersistent: false, info.LoginProvider);
+						return LocalRedirect(returnUrl);
+					}
+				}
+				foreach (var error in result.Errors)
+				{
+					ModelState.AddModelError(string.Empty, error.Description);
+				}
+			}
 
-            ProviderDisplayName = info.ProviderDisplayName;
-            ReturnUrl = returnUrl;
-            return Page();
-        }
+			ProviderDisplayName = info.ProviderDisplayName;
+			ReturnUrl = returnUrl;
+			return Page();
+		}
+		
 
         private IdentityUser CreateUser()
         {
@@ -221,3 +231,64 @@ namespace ECommerceProject.Areas.Identity.Pages.Account
         }
     }
 }
+
+
+// Replace this code when External Login with google code is removed---
+/*public async Task<IActionResult> OnPostConfirmationAsync(string returnUrl = null)
+{
+	returnUrl = returnUrl ?? Url.Content("~/");
+	// Get the information about the user from the external login provider
+	var info = await _signInManager.GetExternalLoginInfoAsync();
+	if (info == null)
+	{
+		ErrorMessage = "Error loading external login information during confirmation.";
+		return RedirectToPage("./Login", new { ReturnUrl = returnUrl });
+	}
+
+	if (ModelState.IsValid)
+	{
+		var user = CreateUser();
+
+		await _userStore.SetUserNameAsync(user, Input.Email, CancellationToken.None);
+		await _emailStore.SetEmailAsync(user, Input.Email, CancellationToken.None);
+
+		var result = await _userManager.CreateAsync(user);
+		if (result.Succeeded)
+		{
+			result = await _userManager.AddLoginAsync(user, info);
+			if (result.Succeeded)
+			{
+				_logger.LogInformation("User created an account using {Name} provider.", info.LoginProvider);
+
+				var userId = await _userManager.GetUserIdAsync(user);
+				var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);
+				code = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(code));
+				var callbackUrl = Url.Page(
+					"/Account/ConfirmEmail",
+					pageHandler: null,
+					values: new { area = "Identity", userId = userId, code = code },
+					protocol: Request.Scheme);
+
+				await _emailSender.SendEmailAsync(Input.Email, "Confirm your email",
+					$"Please confirm your account by <a href='{HtmlEncoder.Default.Encode(callbackUrl)}'>clicking here</a>.");
+
+				// If account confirmation is required, we need to show the link if we don't have a real email sender
+				if (_userManager.Options.SignIn.RequireConfirmedAccount)
+				{
+					return RedirectToPage("./RegisterConfirmation", new { Email = Input.Email });
+				}
+
+				await _signInManager.SignInAsync(user, isPersistent: false, info.LoginProvider);
+				return LocalRedirect(returnUrl);
+			}
+		}
+		foreach (var error in result.Errors)
+		{
+			ModelState.AddModelError(string.Empty, error.Description);
+		}
+	}
+
+	ProviderDisplayName = info.ProviderDisplayName;
+	ReturnUrl = returnUrl;
+	return Page();
+}*/

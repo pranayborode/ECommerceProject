@@ -7,7 +7,7 @@ namespace ECommerceProject.Controllers
     [Authorize(Roles = "Admin")]
     public class RoleController : Controller
 	{
-		 RoleManager<IdentityRole> roleManager;
+		RoleManager<IdentityRole> roleManager;
 		public RoleController(RoleManager<IdentityRole> roleManager)
 		{
 			this.roleManager = roleManager;
@@ -18,11 +18,14 @@ namespace ECommerceProject.Controllers
 			var roles = roleManager.Roles.ToList();
 			return View(roles);
 		}
+
+
 		public IActionResult Create()
 		{
 			return View(new IdentityRole());
 		}
 
+		
 		[HttpPost]
 		public async Task<IActionResult> Create(IdentityRole role)
 		{

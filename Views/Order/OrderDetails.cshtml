@@ -33,39 +33,80 @@
 <div class="container-fluid">
 	<div class="row">
 		<div class="col-12">
-			<div class="row justify-content-center">
-				<div class="col-lg-7 col-md-10 col-sm-11">
-					<div class="horizontal-steps mt-3 mb-2 pb-5" id="">
-						<div class="horizontal-steps-content">
-							<div class="step-item @(Model.Order.OrderStatus == ECommerceProject.Helper.OrderStatus.Pending? "current" : (Model.Order.OrderStatus >ECommerceProject.Helper.OrderStatus.Pending ? "completed" : ""))">
-								<span data-bs-container="#tooltip-container" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-original-title="Order Placed Date">@OrderStatus.Pending</span>
-							</div>
-							<div class="step-item @(Model.Order.OrderStatus == ECommerceProject.Helper.OrderStatus.Confirmed? "current" : (Model.Order.OrderStatus >ECommerceProject.Helper.OrderStatus.Confirmed ? "completed" : ""))">
-								<span data-bs-container="#tooltip-container" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-original-title="Order Placed Date">@OrderStatus.Confirmed</span>
-							</div>
-							<div class="step-item @(Model.Order.OrderStatus == ECommerceProject.Helper.OrderStatus.Packed ? "current" : (Model.Order.OrderStatus > ECommerceProject.Helper.OrderStatus.Packed ? "completed" : ""))">
-								<span data-bs-container="#tooltip-container" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-original-title="Packed Date">@OrderStatus.Packed</span>
-							</div>
-							<div class="step-item @(Model.Order.OrderStatus == ECommerceProject.Helper.OrderStatus.Shipped ? "current" : (Model.Order.OrderStatus > ECommerceProject.Helper.OrderStatus.Shipped ? "completed" : ""))">
-								<span data-bs-container="#tooltip-container" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-original-title="Shipped Date">@OrderStatus.Shipped</span>
-							</div>
-							<div class="step-item @(Model.Order.OrderStatus == ECommerceProject.Helper.OrderStatus.Delivered ? "current" : (Model.Order.OrderStatus > ECommerceProject.Helper.OrderStatus.Delivered ? "completed" : ""))">
-								<span data-bs-container="#tooltip-container" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-original-title="Delivered Date">@OrderStatus.Delivered</span>
+			<div class="card mt-4">
+				<div class="card-body pb-0">
+					<span>Track Order:</span>
+					<div class="row justify-content-center">
+						<div class="col-lg-7 col-md-10 col-sm-11">
+							<div class="horizontal-steps mt-3 mb-2 pb-5" id="">
+								<div class="horizontal-steps-content">
+									<div class="step-item @(Model.Order.OrderStatus == ECommerceProject.Helper.OrderStatus.Pending? "current" : (Model.Order.OrderStatus >ECommerceProject.Helper.OrderStatus.Pending ? "completed" : ""))">
+										<span data-bs-container="#tooltip-container" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-original-title="Order Placed Date">@OrderStatus.Pending</span>
+									</div>
+									<div class="step-item @(Model.Order.OrderStatus == ECommerceProject.Helper.OrderStatus.Confirmed? "current" : (Model.Order.OrderStatus >ECommerceProject.Helper.OrderStatus.Confirmed ? "completed" : ""))">
+										<span data-bs-container="#tooltip-container" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-original-title="Order Placed Date">@OrderStatus.Confirmed</span>
+									</div>
+									<div class="step-item @(Model.Order.OrderStatus == ECommerceProject.Helper.OrderStatus.Packed ? "current" : (Model.Order.OrderStatus > ECommerceProject.Helper.OrderStatus.Packed ? "completed" : ""))">
+										<span data-bs-container="#tooltip-container" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-original-title="Packed Date">@OrderStatus.Packed</span>
+									</div>
+									<div class="step-item @(Model.Order.OrderStatus == ECommerceProject.Helper.OrderStatus.Shipped ? "current" : (Model.Order.OrderStatus > ECommerceProject.Helper.OrderStatus.Shipped ? "completed" : ""))">
+										<span data-bs-container="#tooltip-container" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-original-title="Shipped Date">@OrderStatus.Shipped</span>
+									</div>
+									<div class="step-item @(Model.Order.OrderStatus == ECommerceProject.Helper.OrderStatus.Delivered ? "current" : (Model.Order.OrderStatus > ECommerceProject.Helper.OrderStatus.Delivered ? "completed" : ""))">
+										<span data-bs-container="#tooltip-container" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-original-title="Delivered Date">@OrderStatus.Delivered</span>
+									</div>
+									@* @if (Model.Order.OrderStatus == ECommerceProject.Helper.OrderStatus.Cancelled)
+									{
+									<div class="step-item @(Model.Order.OrderStatus == ECommerceProject.Helper.OrderStatus.Cancelled ? "current" : (Model.Order.OrderStatus > ECommerceProject.Helper.OrderStatus.Cancelled ? "completed" : ""))">
+									<span data-bs-container="#tooltip-container" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-original-title="Cancelled Date">@OrderStatus.Cancelled</span>
+									</div>
+									}
+									@if (Model.Order.OrderStatus == ECommerceProject.Helper.OrderStatus.Returned)
+									{
+									<div class="step-item @(Model.Order.OrderStatus == ECommerceProject.Helper.OrderStatus.Returned ? "current" : (Model.Order.OrderStatus > ECommerceProject.Helper.OrderStatus.Returned ? "completed" : ""))">
+									<span data-bs-container="#tooltip-container" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-original-title="Returned Date Date">@OrderStatus.Returned</span>
+									</div>
+									} *@
+								</div>
+
+
+								@{
+									int totalSteps = (Enum.GetValues(typeof(ECommerceProject.Helper.OrderStatus)).Length) - 3;
+
+									int completedSteps = (int)Model.Order.OrderStatus;
+
+									double progressWidth = ((double)(completedSteps) / (totalSteps)) * 100;
+
+								}
+								<div class="process-line" style="width: @progressWidth%;"></div>
 							</div>
 						</div>
-						@{
-							int totalSteps = (Enum.GetValues(typeof(ECommerceProject.Helper.OrderStatus)).Length) - 3;
-
-							int completedSteps = (int)Model.Order.OrderStatus;
-
-							double progressWidth = ((double)(completedSteps) / (totalSteps)) * 100;
-
-						}
-						<div class="process-line" style="width: @progressWidth%;"></div>
 					</div>
+					<div class="col-lg-12">
+						<div class="row">
+							<div class="col-lg-3 mb-2">
+								@if (Model.Order.DeliveryMessage != null)
+								{
+
+									<span>@Model.Order.DeliveryMessage</span>
+									<span class="text-bold">@Model.Order.DeliveryDate.Value.ToString("dddd, dd MMMM yyyy")</span>
+
+								}
+							</div>
+							<div class="col-lg-3">
+							</div>
+							<div class="col-lg-3">
+							</div>
+							<div class="col-lg-3 d-flex justify-content-end mt-2">
+								<div class="pb-2">
+									<a class="btn btn-danger btn-sm">Cancel Order</a>
+								</div>
+							</div>
+						</div>
+					</div>
+
 				</div>
 			</div>
-
 			<div class="row">
 				<div class="col-lg-12">
 					<div class="card">
@@ -98,7 +139,7 @@
 														<a asp-action="QuickView" asp-controller="Home" asp-route-id="@item.Product.ProductId" class="text-body">@item.Product.Name</a>
 														<br>
 														<small class="me-2"><b>Size:</b>@item.Size </small>
-						
+
 
 													</p>
 												</td>

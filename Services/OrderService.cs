@@ -36,7 +36,12 @@ namespace ECommerceProject.Services
            return repo.GetOrders();
         }
 
-		public IEnumerable<Order> GetOrdersDesByDate()
+        public IEnumerable<Order> GetOrdersByUserId(string userId)
+        {
+            return repo.GetOrdersByUserId(userId);
+        }
+
+        public IEnumerable<Order> GetOrdersDesByDate()
 		{
 			return repo.GetOrdersDesByDate();
 		}

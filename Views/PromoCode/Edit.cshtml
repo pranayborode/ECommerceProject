@@ -1,0 +1,84 @@
+﻿@model ECommerceProject.ViewModels.PromoCodeViewModel
+
+@{
+    ViewData["Title"] = "Edit";
+}
+
+<h1>Edit</h1>
+
+<h4>PromoCode</h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="Edit">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <input type="hidden" asp-for="PromoCode.PromoCodeId" />
+            <div class="form-group">
+                <label asp-for="PromoCode.CodeName" class="control-label"></label>
+                <input asp-for="PromoCode.CodeName" class="form-control" />
+                <span asp-validation-for="PromoCode.CodeName" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="PromoCode.Messsage" class="control-label"></label>
+                <input asp-for="PromoCode.Messsage" class="form-control" />
+                <span asp-validation-for="PromoCode.Messsage" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="PromoCode.StartDate" class="control-label"></label>
+                <input asp-for="PromoCode.StartDate" class="form-control" />
+                <span asp-validation-for="PromoCode.StartDate" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="PromoCode.EndDate" class="control-label"></label>
+                <input asp-for="PromoCode.EndDate" class="form-control" />
+                <span asp-validation-for="PromoCode.EndDate" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="PromoCode.NoOfUsers" class="control-label"></label>
+                <input asp-for="PromoCode.NoOfUsers" class="form-control" />
+                <span asp-validation-for="PromoCode.NoOfUsers" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="PromoCode.MinimumOrderAmount" class="control-label"></label>
+                <input asp-for="PromoCode.MinimumOrderAmount" class="form-control" />
+                <span asp-validation-for="PromoCode.MinimumOrderAmount" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="PromoCode.Discount" class="control-label"></label>
+                <input asp-for="PromoCode.Discount" class="form-control" />
+                <span asp-validation-for="PromoCode.Discount" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="PromoCode.DiscountType" class="control-label"></label>
+                <select asp-for="PromoCode.DiscountType" class="form-control" asp-items="@(new SelectList(Model.DiscountTypes))"></select>
+                <span asp-validation-for="PromoCode.DiscountType" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="PromoCode.MaxDiscountAmount" class="control-label"></label>
+                <input asp-for="PromoCode.MaxDiscountAmount" class="form-control" />
+                <span asp-validation-for="PromoCode.MaxDiscountAmount" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="PromoCode.RepeatUsage" class="control-label"></label>
+                <select asp-for="PromoCode.RepeatUsage" class="form-control" asp-items="@(new SelectList(Model.RepeatUsages))"></select>
+                <span asp-validation-for="PromoCode.RepeatUsage" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="PromoCode.PromoCodeStatus" class="control-label"></label>
+                <select asp-for="PromoCode.PromoCodeStatus" class="form-control" asp-items="@(new SelectList(Model.PromoCodeStatuses))"></select>
+                <span asp-validation-for="PromoCode.PromoCodeStatus" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Save" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    <a asp-action="Index">Back to List</a>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

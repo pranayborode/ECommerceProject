@@ -20,7 +20,10 @@
 		discountTotal = grandTotal - subtotal;
 		amountForFreeDelivery = FreeDeliveryThreshold - subtotal;
 		progressPercentage = (int)((subtotal / FreeDeliveryThreshold) * 100);
-
+		@if (subtotal < 499)
+		{
+			subtotal += 40;
+		}
 		formattedFreeDeliveryThreshold = ((int)FreeDeliveryThreshold).ToString("C0");
 		formattedAmountForFreeDelivery = ((int)amountForFreeDelivery).ToString("C0");
 	}
@@ -164,17 +167,17 @@
 														<td>Shipping Charge :</td>
 														@if (subtotal < 499)
 														{
-															<td>40</td>
+															<td>₹ 40.00</td>
 														}
 														else
 														{
 															<td>Free</td>
 														}
 													</tr>
-													<tr>
+													@* <tr>
 														<td>Promotion Applied: </td>
 														<td></td>
-													</tr>
+													</tr> *@
 													<tr>
 														<th>Total :</th>
 														<th>@subtotal.ToString("C")</th>
@@ -184,13 +187,13 @@
 										</div>
 										<!-- end table-responsive -->
 									</div>
-									<div class="alert alert-warning mt-3" role="alert">
+									@* <div class="alert alert-warning mt-3" role="alert">
 										Use coupon code <strong>HYPBM</strong> and get 10% discount !
 									</div>
 									<div class="input-group mt-3">
 										<input type="text" class="form-control" placeholder="Coupon code" aria-label="Recipient's username">
 										<button class="input-group-text btn-light" type="button">Apply</button>
-									</div>
+									</div> *@
 								</div> <!-- end col -->
 							</div> <!-- end row -->
 						</div> <!-- end card-body-->
